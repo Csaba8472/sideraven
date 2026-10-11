@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/readme/logo.svg" alt="Sideraven logo" width="160">
+<img src="docs/readme/logo.png" alt="Sideraven logo" width="160">
 
 # Sideraven
 
