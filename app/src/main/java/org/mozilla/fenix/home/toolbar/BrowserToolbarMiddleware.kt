@@ -157,6 +157,19 @@ class BrowserToolbarMiddleware(
         next: (BrowserToolbarAction) -> Unit,
         action: BrowserToolbarAction,
     ) {
+        // SIDERAVEN-HOOK: in Auto-Hide Mode the tab counter is the Sidebar Button
+        if (action is TabCounterClicked && pt.dweep.sideraven.SidebarGate.revealIfAutoHide(uiContext)) {
+            next(action)
+            return
+        }
+        // ...and the address opens Sideraven's Search Pop-up where a Sidebar exists (spec 0006)
+        if (action is OriginClicked && pt.dweep.sideraven.ToolbarSearch.openFromToolbar(uiContext, fromHome = true)) return
+        // ...and its + follows New Tab Behaviour
+        if ((action is AddNewTab || action is AddNewPrivateTab) && pt.dweep.sideraven.ToolbarSearch.openNewTab(uiContext, action is AddNewPrivateTab)) {
+            next(action)
+            return
+        }
+        // SIDERAVEN-HOOK-END
         when (action) {
             is Init -> {
                 next(action)
@@ -370,7 +383,9 @@ class BrowserToolbarMiddleware(
 
         return listOf(
                 HomeToolbarActionConfig(HomeToolbarAction.TabCounter) {
-                    !shouldUseExpandedToolbar || !isTallWindow || isWideWindow
+                    // SIDERAVEN-HOOK: the Sidebar replaces the tab counter, except in Auto-Hide Mode with the Flap off
+                    (!shouldUseExpandedToolbar || !isTallWindow || isWideWindow) &&
+                        pt.dweep.sideraven.SidebarGate.showsTabCounter(uiContext)
                 },
                 HomeToolbarActionConfig(HomeToolbarAction.Menu) {
                     !shouldUseExpandedToolbar || !isTallWindow || isWideWindow
@@ -474,6 +489,8 @@ class BrowserToolbarMiddleware(
     }
 
     private fun updateTabsCount(store: Store<BrowserToolbarState, BrowserToolbarAction>) {
+        // SIDERAVEN-HOOK: rebuild the tab counter / Sidebar Button when the Sidebar Mode changes
+        scope.launch { pt.dweep.sideraven.SidebarGate.modeChanges(uiContext).collect { updateEndBrowserActions(store) } }
         browserStore.observeWhileActive {
             distinctUntilChangedBy { it.tabs.size }
                 .collect {
@@ -540,6 +557,14 @@ class BrowserToolbarMiddleware(
         source: Source = Source.Unknown,
     ): Action =
         when (action) {
+            // SIDERAVEN-HOOK: beside a Sidebar the slot is the Sidebar Button (spec 0008)
+            HomeToolbarAction.TabCounter if pt.dweep.sideraven.SidebarGate.showsSidebar(uiContext) ->
+                mozilla.components.compose.browser.toolbar.concept.Action.ActionButtonRes(
+                    drawableResId = R.drawable.sideraven_ic_sidebar_24,
+                    contentDescription = R.string.sideraven_open_sidebar,
+                    onClick = TabCounterClicked(source),
+                )
+            // SIDERAVEN-HOOK-END
             HomeToolbarAction.TabCounter -> {
                 val isInPrivateMode = browsingModeManager.mode.isPrivate
                 val tabsCount = browserStore.state.getNormalOrPrivateTabs(isInPrivateMode).size

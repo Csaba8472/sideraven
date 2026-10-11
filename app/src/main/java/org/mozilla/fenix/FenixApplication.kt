@@ -239,6 +239,8 @@ open class FenixApplication : Application(), Provider, ThemeProvider {
             applicationScope.launch(IO) {
                 applicationContext.getSharedPreferences(Settings.FENIX_PREFERENCES, MODE_PRIVATE)
             }
+            // SIDERAVEN-HOOK: load Sideraven's stores in the background too, before the Sidebar needs them (spec 0009)
+            pt.dweep.sideraven.SideravenStartup.preload(applicationContext)
 
             // Allow overriding secret settings with values specified in `local.properties` at build time.
             // This allows developers to opt-in to a set of features for their own workflow.

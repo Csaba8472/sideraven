@@ -331,6 +331,8 @@ class CustomizationFragment : PreferenceFragmentCompat(), SystemInsetsPaddedFrag
 
     private fun setupTabStripCategory() {
         val tabStripSwitch = requirePreference<SwitchPreferenceCompat>(R.string.pref_key_tab_strip_show)
+        // SIDERAVEN-HOOK: the Tab Strip setting is hidden; the Sidebar replaces it
+        tabStripSwitch.parent?.isVisible = pt.dweep.sideraven.SidebarGate.allowsTabStrip()
         val context = requireContext()
 
         tabStripSwitch.isChecked = Settings(requireContext()).isTabStripEnabled

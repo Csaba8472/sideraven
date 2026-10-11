@@ -394,6 +394,12 @@ class Core(
                 AboutHomeMiddleware(homepageTitle = context.getString(R.string.tab_tray_homepage_tab)),
                 BrowserVisualCompletenessMiddleware(visualCompletenessQueue),
                 TabGroupMiddleware(tabGroupRepository = tabGroupRepository),
+                // SIDERAVEN-HOOK: new tabs appear at the top (or bottom, per Sideraven Settings) of the Sidebar's Tab List
+                pt.dweep.sideraven.NewTabPositionMiddleware.from(context),
+                // SIDERAVEN-HOOK: every normal tab belongs to a Space
+                pt.dweep.sideraven.SpacesMiddleware(
+                    isGlobal = { tabId -> pt.dweep.sideraven.Essentials.processLinks.value.containsValue(tabId) },
+                ) { pt.dweep.sideraven.Spaces.get(context) },
             )
 
         BrowserStore(

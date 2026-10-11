@@ -499,6 +499,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity, Crash
         window.decorView.layoutDirection = Locale.getDefault().layoutDirection
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
+        // SIDERAVEN-HOOK: place the Sidebar left of the content (toolbar spans the Content Area only)
+        pt.dweep.sideraven.SidebarHost.install(this, binding.container)
 
         AutomatedLaunch.processIntentIfPerformanceTestOrAutomation(intent, this)
 
@@ -1353,6 +1355,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity, Crash
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        // SIDERAVEN-HOOK: Sidebar keyboard shortcuts (Ctrl+Shift+S, Ctrl+1..9, Ctrl+Alt+Left/Right)
+        if (pt.dweep.sideraven.SidebarKeyboard.handle(event)) return true
         // The KEYCODE_MENU event is handled here instead of onKeyDown or onKeyUp because
         // after navigating to another fragment like Settings or Bookmarks, and then back this
         // key event is somehow getting consumed before it reaches onKeyDown or onKeyUp.

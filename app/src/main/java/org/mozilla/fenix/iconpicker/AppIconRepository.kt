@@ -35,6 +35,15 @@ class DefaultAppIconRepository(
     override val groupedAppIcons: Map<IconGroupTitle, List<AppIcon>>
         get() =
             mapOf(
+                // SIDERAVEN-HOOK: Sideraven's featured icons
+                IconGroupTitle(R.string.alternative_app_icon_group_featured) to
+                    listOf(
+                        AppIcon.AppSideravenClassic,
+                        AppIcon.AppSideravenTealAndPurple,
+                        AppIcon.AppSideravenBlackAndWhite,
+                        AppIcon.AppSideravenShortHike,
+                    ),
+                // SIDERAVEN-HOOK-END
                 // IconGroupTitle(R.string.alternative_app_icon_group_featured) to
                 //     listOf(
                 //         AppIcon.AppRetro2004,

@@ -1,3 +1,4 @@
+# SIDERAVEN-HOOK: Sideraven's issue form (Sideraven version and Sidebar mode; no links to Iceraven's issue rules)
 name: "🐞 Bug report"
 description: Create a report to help us improve.
 title: "[Bug]: "
@@ -6,10 +7,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        - Please do your best to search for duplicate issues before filing a new issue so we can keep our issue board clean.
-        - Have a look at ["I want to file an issue!"][info] for more information.
-
-        [info]: https://github.com/fork-maintainers/iceraven-browser#i-want-to-file-an-issue
+        - Search the existing issues first, so a problem is only reported once.
+        - One problem per issue, please.
+        - If the problem also happens in Iceraven, it may be Iceraven's or Firefox's to fix: say so below.
   - type: textarea
     attributes:
       label: Steps to reproduce
@@ -53,9 +53,16 @@ body:
       required: true
   - type: input
     attributes:
-      label: Iceraven version
-      description: You can find this information in Settings -> About Iceraven.
-      placeholder: 2.22.0 arm64-v8a
+      label: Sideraven version
+      description: You can find this in Settings -> About Sideraven.
+      placeholder: 1.0.0 arm64-v8a
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Sidebar mode and device
+      description: Persistent, Collapsed or Auto-Hide; tablet or phone; Sidebar on the left or the right.
+      placeholder: Auto-Hide, tablet, left
     validations:
       required: true
   - type: textarea
@@ -64,7 +71,7 @@ body:
       description: |
         Device logs or crash information can greatly aid in debugging. You can find some details here on how to [retrieve device logs or crash IDs][log].
 
-        [log]: https://github.com/fork-maintainers/iceraven-browser/blob/iceraven/docs/Logging-Crash-Information.md
+        [log]: https://github.com/Dweep4269/sideraven/blob/main/docs/Logging-Crash-Information.md
     validations:
       required: false
   - type: textarea

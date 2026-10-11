@@ -88,6 +88,15 @@
     <action
         android:id="@+id/action_global_customizationFragment"
         app:destination="@id/customizationFragment" />
+    <!-- SIDERAVEN-HOOK: Sideraven Settings -->
+    <action
+        android:id="@+id/action_global_sideravenSettingsFragment"
+        app:destination="@id/sideravenSettingsFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right" />
+    <!-- SIDERAVEN-HOOK-END -->
     <action
         android:id="@+id/action_global_searchEngineFragment"
         app:destination="@id/search_engine_graph" />
@@ -1099,6 +1108,12 @@
         android:id="@+id/aboutLibrariesFragment"
         android:name="org.mozilla.fenix.settings.about.AboutLibrariesFragment"
         tools:layout="@layout/fragment_about_libraries" />
+    <!-- SIDERAVEN-HOOK: Sideraven Settings -->
+    <fragment
+        android:id="@+id/sideravenSettingsFragment"
+        android:name="pt.dweep.sideraven.settings.SideravenSettingsFragment"
+        android:label="@string/sideraven_settings_title" />
+    <!-- SIDERAVEN-HOOK-END -->
     <fragment
         android:id="@+id/customizationFragment"
         android:name="org.mozilla.fenix.settings.CustomizationFragment"

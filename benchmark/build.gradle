@@ -26,6 +26,13 @@ android {
             signingConfig = signingConfigs.debug
             matchingFallbacks = ["release"]
         }
+        // SIDERAVEN-HOOK: Sideraven's benchmarks and baseline profile run against forkRelease (spec 0009)
+        forkRelease {
+            debuggable = true
+            signingConfig = signingConfigs.debug
+            matchingFallbacks = ["release"]
+        }
+        // SIDERAVEN-HOOK-END
     }
 
     targetProjectPath = project.findProject(":app") != null ? ":app" : ":fenix"
@@ -56,6 +63,7 @@ dependencies {
 
 androidComponents {
     beforeVariants(selector().all()) {
-        enable = (buildType == "benchmark")
+        // SIDERAVEN-HOOK: also Sideraven's forkRelease benchmarks (spec 0009)
+        enable = (buildType == "benchmark" || buildType == "forkRelease")
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Zen Browser's "circle" Space icon (zen-browser/desktop, MPL 2.0), as converted to an
+     Android vector by Z-Sync (Kjell6/Z-Sync). Filled black; tinted where drawn. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M 256,464 C 141.31,464 48,370.69 48,256 48,141.31 141.31,48 256,48 c 114.69,0 208,93.31 208,208 0,114.69 -93.31,208 -208,208 z" />
+</vector>

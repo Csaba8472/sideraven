@@ -247,6 +247,9 @@ class SettingsFragment : PreferenceFragmentCompat(), SystemInsetsPaddedFragment 
 
     override fun onResume() {
         super.onResume()
+        // SIDERAVEN-HOOK: the Sideraven Settings entry
+        pt.dweep.sideraven.settings.SideravenSettings.installEntry(this)
+        // SIDERAVEN-HOOK-END
 
         // Use nimbus to set the title, and a trivial addition
         val nimbusValidation = FxNimbus.features.nimbusValidation.value()

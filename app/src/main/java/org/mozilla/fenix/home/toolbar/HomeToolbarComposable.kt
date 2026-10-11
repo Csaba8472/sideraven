@@ -141,7 +141,8 @@ internal class HomeToolbarComposable(
         FirefoxTheme {
             MaterialTheme(
                 colorScheme =
-                    homepageToolbarColors(
+                    // SIDERAVEN-HOOK: beside a Sidebar the toolbar takes its colour (spec 0008)
+                    pt.dweep.sideraven.SidebarToolbarColors.scheme(homepageToolbarColors(
                         isPrivateMode = isPrivateMode,
                         shouldUseEdgeToEdgeColors =
                             hasWallpaperBackground &&
@@ -150,7 +151,8 @@ internal class HomeToolbarComposable(
                                 } else {
                                     !isSearching || (currentQuery.isEmpty() && !queryWasPrefilled)
                                 },
-                    )
+                    ))
+                    // SIDERAVEN-HOOK-END
             ) {
                 ToolbarContent(wallpaperTextColor = wallpaperTextColor)
             }

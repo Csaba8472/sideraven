@@ -29,7 +29,8 @@ import org.mozilla.fenix.R
  */
 enum class AppIcon(
     val aliasSuffix: String,
-    @param:DrawableRes val iconForegroundId: Int = R.drawable.ic_wordmark_logo,
+    // SIDERAVEN-HOOK: Sideraven's raven on Fenix's Solid and Gradient backgrounds
+    @param:DrawableRes val iconForegroundId: Int = pt.dweep.sideraven.SideravenAppIcons.previewForeground(aliasSuffix),
     val iconBackground: IconBackground = IconBackground.Color(colorResId = colorsR.color.novaWhite),
     @param:StringRes val titleId: Int,
     @param:StringRes val subtitleId: Int? = null,
@@ -39,6 +40,32 @@ enum class AppIcon(
         iconBackground = IconBackground.Color(colorResId = R.color.ic_launcher_background),
         titleId = R.string.alternative_app_icon_option_default,
     ),
+    // SIDERAVEN-HOOK: Sideraven's featured icons
+    AppSideravenClassic(
+        aliasSuffix = "AppSideravenClassic",
+        iconForegroundId = R.drawable.sideraven_ic_icon_preview_classic,
+        iconBackground = IconBackground.Drawable(R.drawable.sideraven_ic_launcher_classic_background),
+        titleId = R.string.sideraven_app_icon_classic,
+    ),
+    AppSideravenTealAndPurple(
+        aliasSuffix = "AppSideravenTealAndPurple",
+        iconForegroundId = R.drawable.sideraven_ic_icon_preview_teal_and_purple,
+        iconBackground = IconBackground.Drawable(R.drawable.sideraven_ic_launcher_teal_and_purple_background),
+        titleId = R.string.sideraven_app_icon_teal_and_purple,
+    ),
+    AppSideravenBlackAndWhite(
+        aliasSuffix = "AppSideravenBlackAndWhite",
+        iconForegroundId = R.drawable.sideraven_ic_icon_preview_black_and_white,
+        iconBackground = IconBackground.Drawable(R.drawable.sideraven_ic_launcher_black_and_white_background),
+        titleId = R.string.sideraven_app_icon_black_and_white,
+    ),
+    AppSideravenShortHike(
+        aliasSuffix = "AppSideravenShortHike",
+        iconForegroundId = R.drawable.sideraven_ic_launcher_short_hike_foreground,
+        iconBackground = IconBackground.Drawable(R.drawable.sideraven_ic_launcher_short_hike_background),
+        titleId = R.string.sideraven_app_icon_short_hike,
+    ),
+    // SIDERAVEN-HOOK-END
     AppSolidLight(
         aliasSuffix = "AppSolidLight",
         titleId = R.string.alternative_app_icon_option_light,

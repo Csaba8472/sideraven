@@ -91,6 +91,9 @@ class AccountSettingsFragment : PreferenceFragmentCompat(), SystemInsetsPaddedFr
 
     override fun onResume() {
         super.onResume()
+        // SIDERAVEN-HOOK: a link to Zen Sync (in Sideraven Settings)
+        pt.dweep.sideraven.sync.ZenSyncPreferences.installLink(this)
+        // SIDERAVEN-HOOK-END
         showToolbar(getString(R.string.preferences_account_settings))
         args.preferenceToScrollTo?.let {
             scrollToPreferenceWithHighlight(it)

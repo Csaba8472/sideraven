@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<!-- Layout button: the address bar goes into the Sidebar. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M5.5,4.5H18.5A2.5,2.5 0,0 1,21,7V17A2.5,2.5 0,0 1,18.5,19.5H5.5A2.5,2.5 0,0 1,3,17V7A2.5,2.5 0,0 1,5.5,4.5Z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M10.5,4.5V19.5"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M5.9,7H7.699999999999999A0.9,0.9 0,0 1,8.6,7.9A0.9,0.9 0,0 1,7.699999999999999,8.8H5.9A0.9,0.9 0,0 1,5,7.9A0.9,0.9 0,0 1,5.9,7Z" />
+</vector>

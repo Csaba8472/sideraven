@@ -2296,7 +2296,15 @@ class Settings(
             default = { FxNimbus.features.searchOptimizationOption.value().showSportsCard },
         )
 
-    var isTabStripEnabled by
+    // SIDERAVEN-HOOK: the Sidebar replaces the Tab Strip (suppressed, not deleted)
+    var isTabStripEnabled: Boolean
+        get() = pt.dweep.sideraven.SidebarGate.allowsTabStrip() && isTabStripEnabledPreference
+        set(value) {
+            isTabStripEnabledPreference = value
+        }
+    // SIDERAVEN-HOOK-END
+
+    private var isTabStripEnabledPreference by
         booleanPreference(
             appContext.getPreferenceKey(R.string.pref_key_tab_strip_show),
             default =

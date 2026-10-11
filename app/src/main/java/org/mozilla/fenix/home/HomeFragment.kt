@@ -725,7 +725,8 @@ class HomeFragment : Fragment() {
                             topBar = {
                                 if (isToolbarAtTop) {
                                     ToolbarSlot(captureToolbarBounds, { toolbarBoundsInRoot = it }) {
-                                        toolbarView.Content()
+                                        // SIDERAVEN-HOOK: hidden in the Sidebar layout
+                                        pt.dweep.sideraven.SidebarToolbar.HideInSidebarLayout { toolbarView.Content() }
                                     }
                                 }
                             },
@@ -736,12 +737,15 @@ class HomeFragment : Fragment() {
                                     }
                                 } else {
                                     ToolbarSlot(captureToolbarBounds, { toolbarBoundsInRoot = it }) {
-                                        toolbarView.Content()
+                                        // SIDERAVEN-HOOK: hidden in the Sidebar layout
+                                        pt.dweep.sideraven.SidebarToolbar.HideInSidebarLayout { toolbarView.Content() }
                                     }
                                 }
                             },
                             containerColor = Color.Transparent,
                         ) { innerPadding ->
+                            // SIDERAVEN-HOOK: home as a card inside the frame (spec 0006)
+                            pt.dweep.sideraven.HomeCard(innerPadding) {
                             HomeContent(
                                 appState = appState.value,
                                 privacyNoticeBannerState = privacyNoticeBannerState.value,
@@ -751,6 +755,8 @@ class HomeFragment : Fragment() {
                                 microsurveyVisible = microsurveyVisible,
                                 microsurvey = appState.value.microsurvey.current,
                             )
+                            }
+                            // SIDERAVEN-HOOK-END
                         }
                     }
                 }

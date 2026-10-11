@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Zen Browser's "card" Space icon (zen-browser/desktop, MPL 2.0), as converted to an
+     Android vector by Z-Sync (Kjell6/Z-Sync). Filled black; tinted where drawn. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="m 32,376 a 56,56 0 0 0 56,56 h 336 a 56,56 0 0 0 56,-56 V 222 H 32 Z m 66,-76 a 30,30 0 0 1 30,-30 h 48 a 30,30 0 0 1 30,30 v 20 a 30,30 0 0 1 -30,30 H 128 A 30,30 0 0 1 98,320 Z M 424,80 H 88 a 56,56 0 0 0 -56,56 v 26 H 480 V 136 A 56,56 0 0 0 424,80 Z" />
+</vector>

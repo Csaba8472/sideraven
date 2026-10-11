@@ -4,6 +4,7 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- SIDERAVEN-HOOK: targetPackage must match the Sideraven application ID -->
     <shortcut
         android:shortcutId="open_new_tab"
         android:enabled="true"
@@ -12,7 +13,7 @@
         android:shortcutLongLabel="@string/home_screen_shortcut_open_new_tab_2">
         <intent
             android:action="org.mozilla.fenix.OPEN_TAB"
-            android:targetPackage="io.github.forkmaintainers.iceraven.debug"
+            android:targetPackage="app.sideraven.browser.debug"
             android:targetClass="org.mozilla.fenix.IntentReceiverActivity" />
     </shortcut>
     <shortcut
@@ -23,7 +24,7 @@
         android:shortcutLongLabel="@string/home_screen_shortcut_open_new_private_tab_2">
         <intent
             android:action="org.mozilla.fenix.OPEN_PRIVATE_TAB"
-            android:targetPackage="io.github.forkmaintainers.iceraven.debug"
+            android:targetPackage="app.sideraven.browser.debug"
             android:targetClass="org.mozilla.fenix.IntentReceiverActivity" />
     </shortcut>
 </shortcuts>

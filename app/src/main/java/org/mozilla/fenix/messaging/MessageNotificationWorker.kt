@@ -294,7 +294,8 @@ class NotificationDismissedService : LifecycleService() {
         if (intent != null) {
             val messaging = applicationContext.components.nimbus.messaging
 
-            lifecycleScope.launch {
+            // SIDERAVEN-HOOK: getMessage reads from disk; off the main thread (StrictMode crash in debug builds)
+            lifecycleScope.launch(Dispatchers.IO) {
                 // Get the relevant message.
                 val message =
                     intent.getStringExtra(DISMISSED_MESSAGE_ID)?.let { messageId ->

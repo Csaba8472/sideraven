@@ -283,7 +283,8 @@ class TabManagementFragment : Fragment() {
                 }
             }
 
-            FirefoxTheme(theme = TabManagerThemeProvider(selectedPage = state.selectedPage).provideTheme()) {
+            // SIDERAVEN-HOOK: the Tab Tray in the Zen Visual Language (theming only)
+            pt.dweep.sideraven.theme.ZenFirefoxTheme(theme = TabManagerThemeProvider(selectedPage = state.selectedPage).provideTheme()) {
                 val statusBarColor = MaterialTheme.colorScheme.surfaceContainerHigh
                 val navigationBarColor = MaterialTheme.colorScheme.surface
                 val transitionColor = MaterialTheme.colorScheme.surfaceContainer

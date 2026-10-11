@@ -1,3 +1,4 @@
+# SIDERAVEN-HOOK: Sideraven's issue form (Sideraven version and Sidebar mode; no links to Iceraven's issue rules)
 name: "⭐️ Feature request"
 description: Suggest an idea for this project
 title: "[Feature Request]: "
@@ -9,7 +10,6 @@ body:
         - Please do your best to search for duplicate issues before filing a new issue so we can keep our issue board clean
         - Every issue should have exactly one feature request described in it. Please do not file feedback list tickets as it is difficult to parse them and address their individual points
         - Feature Requests are better when they’re open-ended instead of demanding a specific solution e.g: “I want an easier way to do X” instead of “add Y”
-        - Read https://github.com/fork-maintainers/iceraven-browser#i-want-to-file-an-issue for more information
 
   - type: textarea
     attributes:

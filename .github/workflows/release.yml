@@ -1,7 +1,9 @@
 name: Release
 
+# SIDERAVEN-HOOK: Iceraven's release automation fires on every branch/tag creation and
+# needs Iceraven's signing secrets; manual-only in Sideraven (our release flow: ticket 20).
 on:
-  create:
+  workflow_dispatch:
 
 jobs:
   release-automation:

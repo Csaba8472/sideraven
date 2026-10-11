@@ -1,0 +1,100 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package pt.dweep.sideraven.ui
+
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.text.AnnotatedString
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertEquals
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
+import pt.dweep.sideraven.theme.SideravenTheme
+
+/** Spec 0007 ticket 13: QR and voice in the Search Pop-up. */
+@RunWith(AndroidJUnit4::class)
+@Config(qualifiers = "w1280dp-h800dp")
+class SearchExtrasTest {
+    @get:Rule
+    val composeRule = createComposeRule()
+
+    private val submitted = mutableListOf<String>()
+    private val asked = mutableListOf<String>()
+
+    private inner class FakeExtras(
+        override val canScanQr: Boolean = true,
+        override val canUseVoice: Boolean = true,
+    ) : SearchExtras {
+        override fun scanQr(onResult: (String) -> Unit) {
+            asked += "qr"
+            onResult("https://scanned.example/page")
+        }
+
+        override fun voice(onResult: (String) -> Unit) {
+            asked += "voice"
+            onResult("cats in hats")
+        }
+    }
+
+    private fun show(extras: SearchExtras?) =
+        composeRule.setContent {
+            SideravenTheme {
+                SearchPopup(
+                    request = SearchRequest(newTab = true),
+                    providers = emptyList(),
+                    onSubmit = { submitted += it },
+                    onSuggestion = {},
+                    onDismiss = {},
+                    options = SearchOptions(extras = extras),
+                )
+            }
+        }
+
+    @Test
+    fun `WHEN a QR code is scanned THEN its text fills the field, ready to go but not gone`() {
+        show(FakeExtras())
+
+        composeRule.onNodeWithTag(SidebarTestTag.SEARCH_QR).performClick()
+
+        assertEquals(listOf("qr"), asked)
+        composeRule.onNodeWithTag(SidebarTestTag.SEARCH_FIELD)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString("https://scanned.example/page")))
+        assertEquals(emptyList<String>(), submitted)
+    }
+
+    @Test
+    fun `WHEN something is said THEN it is searched straight away`() {
+        show(FakeExtras())
+
+        composeRule.onNodeWithTag(SidebarTestTag.SEARCH_VOICE).performClick()
+
+        assertEquals(listOf("cats in hats"), submitted)
+    }
+
+    @Test
+    fun `GIVEN no camera or speech recognition THEN the buttons aren't there`() {
+        show(FakeExtras(canScanQr = false, canUseVoice = false))
+
+        composeRule.onAllNodesWithTag(SidebarTestTag.SEARCH_QR).assertCountEquals(0)
+        composeRule.onAllNodesWithTag(SidebarTestTag.SEARCH_VOICE).assertCountEquals(0)
+    }
+
+    @Test
+    fun `GIVEN text in the field THEN the clear button replaces them`() {
+        show(FakeExtras())
+        composeRule.onNodeWithTag(SidebarTestTag.SEARCH_QR).performClick()
+
+        composeRule.onAllNodesWithTag(SidebarTestTag.SEARCH_QR).assertCountEquals(0)
+        composeRule.onNodeWithTag(SidebarTestTag.SEARCH_CLEAR).assertExists()
+    }
+}

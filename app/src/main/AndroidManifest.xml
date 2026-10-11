@@ -480,6 +480,68 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity-alias>
+        <!-- SIDERAVEN-HOOK: Sideraven's featured icons -->
+        <activity-alias
+            android:name="${applicationId}.AppSideravenClassic"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/sideraven_ic_launcher_classic"
+            android:roundIcon="@mipmap/sideraven_ic_launcher_classic"
+            android:targetActivity="HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name="${applicationId}.AppSideravenTealAndPurple"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/sideraven_ic_launcher_teal_and_purple"
+            android:roundIcon="@mipmap/sideraven_ic_launcher_teal_and_purple"
+            android:targetActivity="HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name="${applicationId}.AppSideravenBlackAndWhite"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/sideraven_ic_launcher_black_and_white"
+            android:roundIcon="@mipmap/sideraven_ic_launcher_black_and_white"
+            android:targetActivity="HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name="${applicationId}.AppSideravenShortHike"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/sideraven_ic_launcher_short_hike"
+            android:roundIcon="@mipmap/sideraven_ic_launcher_short_hike"
+            android:targetActivity="HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <!-- SIDERAVEN-HOOK-END -->
 
         <!--
           Fennec declared entry for homescreen pinned shortcuts.
