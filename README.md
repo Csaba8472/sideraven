@@ -316,8 +316,8 @@ Sideraven builds on Mozilla's Firefox for Android, GeckoView and Android Compone
 
 ## Star history
 
-<a href="https://star-history.com/#Dweep4269/sideraven&Date">
-  <img src="https://api.star-history.com/svg?repos=Dweep4269/sideraven&type=Date" alt="Sideraven's GitHub stars over time" width="100%">
+<a href="https://star-history.com/#dweep4269/sideraven&Date">
+  <img src="https://api.star-history.com/svg?repos=dweep4269/sideraven&type=Date" alt="Sideraven's GitHub stars over time" width="100%">
 </a>
 
 ---
