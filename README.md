@@ -4,7 +4,7 @@
 
 # Sideraven
 
-### Zen-style vertical tabs for Firefox on Android tablets
+### Zen-style vertical tabs for Firefox on Android tablets, and phones too
 
 [![Latest release](https://img.shields.io/github/v/release/Dweep4269/sideraven?style=for-the-badge&labelColor=1B264F&color=EDF67D)](https://github.com/Dweep4269/sideraven/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/Dweep4269/sideraven/total?style=for-the-badge&labelColor=1B264F&color=EDF67D)](https://github.com/Dweep4269/sideraven/releases)
@@ -14,7 +14,7 @@
 [![Report a bug](https://img.shields.io/badge/Report_a_bug-1B264F?style=for-the-badge&logo=github&logoColor=EDF67D)](https://github.com/Dweep4269/sideraven/issues/new?template=bug_report.yml)
 [![Request a feature](https://img.shields.io/badge/Request_a_feature-1B264F?style=for-the-badge&logo=github&logoColor=EDF67D)](https://github.com/Dweep4269/sideraven/issues/new?template=feature_request.yml)
 
-[Screenshots](#screenshots) · [Features](#features) · [Download](#download) · [Zen Sync](#sync-with-zen-on-your-computer) · [FAQ](#faq) · [Build](#build-from-source)
+[Screenshots](#screenshots) · [For Zen users](#for-zen-users) · [On your phone](#on-your-phone) · [Features](#features) · [Download](#download) · [FAQ](#faq) · [Build](#build-from-source) · [Support](#support-sideraven)
 
 <img alt="Sideraven on a tablet, with the Sidebar down the side of the page" src="docs/readme/banner.png" width="100%">
 
@@ -55,6 +55,60 @@ Under the hood it's a fork of [Iceraven](https://github.com/fork-maintainers/ice
 
 ---
 
+## For Zen users
+
+Sideraven organises tabs the way Zen does, and if you use Zen on your computer, it keeps the two in step.
+
+### Zen's way of organising tabs
+
+- **Spaces.** Separate sets of tabs for work, study or anything else, each with a name, an icon and a colour. Pick the icon from Zen's own icon set or any emoji. Switch with a tap, or with `Ctrl+Alt+←` and `Ctrl+Alt+→`.
+- **Essentials.** Up to 12 sites as icons at the top of the Sidebar, the same in every Space. `Ctrl+1` to `Ctrl+9` open the first nine.
+- **Pinned tabs and folders.** Up to 12 sites per Space that stay put, grouped into folders if you like. Unload one to free memory and it reopens where you left it.
+- **Zen's look.** Rounded tabs, Zen's muted colours and an accent colour of your choice.
+
+### Zen Sync
+
+Zen Sync keeps your Spaces, Essentials, pinned tabs and folders the same on Sideraven and on Zen, in both directions. It goes through the Firefox account you already use, so there's nothing extra to install or host.
+
+- **Your first sync, your call.** Keep this device's Spaces separate, replace them with your computer's, or merge both. Merging shows what it will add to Zen before anything is uploaded.
+- **Pick your Spaces.** Choose which of your computer's Spaces appear here. New ones you make on the computer wait until you turn them on.
+- **Keep some Spaces local.** Mark a Space **Don't sync this space** and it stays on this device only.
+- **Pick what syncs.** Spaces with their pinned tabs and folders, Essentials, and Space colours each have their own switch.
+- **See your desktop tabs.** The tabs open in a Space on your computer show at the end of that Space as **On desktop**. Tap one to open it here. Nothing changes on the computer.
+- **Syncs by itself.** When the app opens, every 5 minutes while it's open, and after you change something. Or turn that off and tap **Sync now**.
+
+To set it up:
+
+1. In Zen on your computer, sign in to your Firefox account and turn on Spaces syncing. If Zen doesn't show the option, set `services.sync.engine.spaces` to `true` in `about:config`.
+2. In Sideraven, sign in to the same Firefox account from the top of **Settings**.
+3. Turn on Zen Sync in **Settings > Sideraven > Zen Sync** and choose how the first sync goes.
+
+To see desktop tabs, also set `zen.spaces-sync.normal-tabs` to `true` in Zen's `about:config`.
+
+> [!NOTE]
+> Zen Sync is Sideraven's own feature, not an official Zen one. If Zen changes how it stores Spaces, Sideraven stops writing to them until it catches up. It keeps reading, so nothing is lost.
+
+---
+
+## On your phone
+
+<p align="center">
+  <img src="docs/readme/phone-sidebar.png" width="35%" alt="The Sidebar pulled out on a phone, with Essentials, pinned tabs and the address bar at the bottom">
+  <img src="docs/readme/phone-page.png" width="35%" alt="A web page filling a phone screen, with the Sidebar's handle at the edge">
+</p>
+
+On a phone the Sidebar stays out of the way until you want it, so the page gets the whole screen.
+
+- **A handle at the edge.** Tap it or pull it to open the Sidebar. Hold it and slide it up or down to where your thumb rests.
+- **Full-screen pages.** Move the address bar into the Sidebar and Firefox's toolbar goes away. Back, forward and reload come with it.
+- **Your back gesture still works.** Swiping in from the edge to open the Sidebar is off on phones. Turn it on in **Settings > Sideraven > Sidebar** if you'd rather swipe than tap.
+- **Split screen and foldables.** Sideraven picks its layout from the size of its window, so it changes when you resize it or unfold the phone.
+- **Nothing left behind.** Spaces, Essentials, pinned tabs, the search pop-up and swipe-to-close all work the same as on a tablet.
+
+Prefer Firefox's own tab tray on your phone? Turn off **Use the sidebar on phones** in **Settings > Sideraven > Sidebar**.
+
+---
+
 ## Features
 
 <table>
@@ -71,16 +125,6 @@ Under the hood it's a fork of [Iceraven](https://github.com/fork-maintainers/ice
 </td>
 <td width="50%" valign="top">
 
-#### Spaces and Essentials
-- **Spaces**, each with its own tabs, name, icon and colour. Switch with a tap, or `Ctrl+Alt+←` and `Ctrl+Alt+→`.
-- **Essentials:** up to 12 favourite sites as icons at the top of the Sidebar, in every Space. `Ctrl+1` to `Ctrl+9` open the first nine.
-- **Pinned tabs and folders:** up to 12 sites per Space that you always want open.
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
 #### Tabs
 - Swipe a tab toward the screen edge to close it.
 - Drag tabs to reorder them, or onto Essentials to pin them.
@@ -88,6 +132,8 @@ Under the hood it's a fork of [Iceraven](https://github.com/fork-maintainers/ice
 - Private browsing switches instantly and gets its own Sidebar.
 
 </td>
+</tr>
+<tr>
 <td width="50%" valign="top">
 
 #### Search and the address bar
@@ -95,8 +141,6 @@ Under the hood it's a fork of [Iceraven](https://github.com/fork-maintainers/ice
 - Move the address bar into the Sidebar for a full-screen page, in any mode that can show it.
 
 </td>
-</tr>
-<tr>
 <td width="50%" valign="top">
 
 #### Make it yours
@@ -105,7 +149,9 @@ Under the hood it's a fork of [Iceraven](https://github.com/fork-maintainers/ice
 - **Backup:** save your Spaces, Essentials, pinned tabs and settings to a file, and restore them on another device.
 
 </td>
-<td width="50%" valign="top">
+</tr>
+<tr>
+<td colspan="2" valign="top">
 
 #### Everything from Iceraven
 - Firefox's GeckoView engine, Firefox Sync and tracking protection.
@@ -155,26 +201,18 @@ Check it with `apksigner verify --print-certs sideraven-<version>-arm64-v8a.apk`
 
 ---
 
-## Sync with Zen on your computer
-
-Zen Sync reads and writes Zen's own data through Firefox Sync. Sign in to Sideraven with the Firefox account your desktop Zen uses, then turn on Zen Sync in **Settings > Sideraven > Zen Sync**.
-
-- Your Spaces, Essentials, pinned tabs and folders sync both ways.
-- You choose which desktop Spaces appear on Android. A Space you create later on the computer stays off until you turn it on.
-- The tabs open in a Space on your computer show under **Desktop Tabs**. You can open them on Android, but changes don't go back.
-- Sync runs on its own, or only when you tap **Sync now**.
-
-> [!NOTE]
-> Zen Sync is Sideraven's own feature, not an official Zen one. If Zen changes how it stores Spaces, Sideraven stops writing to them until it catches up. It keeps reading, so nothing is lost.
-
----
-
 ## FAQ
 
 <details>
 <summary><b>Does it work on phones?</b></summary>
 
-Yes. On a phone the Sidebar hides at the screen edge until you pull it out by its handle, and you can move the address bar into it for full-screen pages. To use Sideraven as a plain browser instead, turn off **Use the sidebar on phones** in **Settings > Sideraven > Sidebar**.
+Yes. The Sidebar waits at the edge of the screen behind a handle, and pages can fill the whole screen. See [On your phone](#on-your-phone). To use Sideraven with Firefox's tab tray instead, turn off **Use the sidebar on phones** in **Settings > Sideraven > Sidebar**.
+</details>
+
+<details>
+<summary><b>Do I need Zen?</b></summary>
+
+No. Spaces, Essentials and pinned tabs work on their own. Zen Sync is only for people who also use Zen on a computer.
 </details>
 
 <details>
@@ -258,6 +296,17 @@ Sideraven's own code lives in `app/src/main/java/pt/dweep/sideraven/`. Where it 
 - Found a bug? [Report it](https://github.com/Dweep4269/sideraven/issues/new?template=bug_report.yml), with your Sideraven version and Sidebar mode.
 - Have an idea? [Request a feature](https://github.com/Dweep4269/sideraven/issues/new?template=feature_request.yml).
 - Contributions are welcome. For anything big, open an issue first so we can agree on the approach.
+
+---
+
+## Support Sideraven
+
+Sideraven is free. If it's become your everyday browser and you'd like to say thanks, you can send a small donation by UPI. It helps me keep up with new Firefox versions and keep building features.
+
+<p align="center">
+  <img src="docs/readme/upi-qr.png" width="220" alt="UPI QR code for donations to Sideraven">
+</p>
+<p align="center">Scan the code with any UPI app, or pay to <code>s12142647-1@okhdfcbank</code>.</p>
 
 ---
 
