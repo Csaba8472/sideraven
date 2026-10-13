@@ -314,10 +314,14 @@ Sideraven is free. If it's become your everyday browser and you'd like to say th
 
 Sideraven builds on Mozilla's Firefox for Android, GeckoView and Android Components, and on the Iceraven fork. The Sidebar, Spaces and Essentials follow ideas from Zen Browser. The wordmark uses Space Mono by Colophon Foundry, under the SIL Open Font License. The A Short Hike app icon is a fan tribute to the game by adamgryu.
 
-## Star history
+## Star History
 
-<a href="https://star-history.com/#dweep4269/sideraven&Date">
-  <img src="https://api.star-history.com/svg?repos=dweep4269/sideraven&type=Date" alt="Sideraven's GitHub stars over time" width="100%">
+<a href="https://www.star-history.com/?repos=dweep4269%2Fsideraven&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=dweep4269/sideraven&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=dweep4269/sideraven&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=dweep4269/sideraven&type=date&legend=top-left" />
+ </picture>
 </a>
 
 ---
