@@ -19,7 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Spaces ticket 09, and spec 0006 ticket 09: closing a pinned tab leaves a Ghost; Unload puts a tab
+ * Closing a pinned tab leaves a Ghost; Unload puts a tab
  * to sleep, keeping it (and its pin) in place.
  */
 @RunWith(AndroidJUnit4::class)

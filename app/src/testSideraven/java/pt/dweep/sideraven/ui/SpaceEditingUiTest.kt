@@ -25,7 +25,7 @@ import pt.dweep.sideraven.SidebarSpace
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 03: a Space's long-press menu and the Edit Space dialog. */
+/** A Space's long-press menu and the Edit Space dialog. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SpaceEditingUiTest {

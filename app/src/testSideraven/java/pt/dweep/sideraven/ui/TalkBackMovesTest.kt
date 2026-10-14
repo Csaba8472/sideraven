@@ -26,7 +26,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** v1 prep ticket 02: everything that moves by dragging also moves from TalkBack's actions. */
+/** Everything that moves by dragging also moves from TalkBack's actions. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class TalkBackMovesTest {

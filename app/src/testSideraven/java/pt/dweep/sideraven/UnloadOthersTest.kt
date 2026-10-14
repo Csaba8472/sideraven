@@ -7,7 +7,7 @@ package pt.dweep.sideraven
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Spec 0006 ticket 10: Unload Others puts every other tab of the pressed one's kind to sleep. */
+/** Unload Others puts every other tab of the pressed one's kind to sleep. */
 class UnloadOthersTest {
     private fun tab(
         id: String,

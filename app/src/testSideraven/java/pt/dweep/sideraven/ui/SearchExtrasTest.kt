@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 13: QR and voice in the Search Pop-up. */
+/** QR and voice in the Search Pop-up. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SearchExtrasTest {

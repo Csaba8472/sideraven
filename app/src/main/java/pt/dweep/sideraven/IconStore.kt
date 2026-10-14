@@ -16,7 +16,7 @@ import java.security.MessageDigest
 import java.util.Base64
 
 /**
- * The last real favicon known for an address (spec 0008), so Essentials, Pinned Tabs and Desktop
+ * The last real favicon known for an address, so Essentials, Pinned Tabs and Desktop
  * Tabs keep their icon while no tab is open. Filled from open tabs, from Fenix's icon loader, and
  * from desktop's icons that arrive with Zen Sync. Icons are kept small, on this device only, and
  * the store is bounded: the least recently used go first.
@@ -121,7 +121,7 @@ class IconStore(
     }
 }
 
-/** Which icon a Sidebar item shows (spec 0008). */
+/** Which icon a Sidebar item shows. */
 object SidebarIcons {
     /** The open tab's own icon, else the last real one known, else the loader's real one. */
     fun pick(

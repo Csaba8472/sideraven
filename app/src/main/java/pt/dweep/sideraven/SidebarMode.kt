@@ -9,11 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import org.json.JSONObject
 
-/** The Sidebar Modes (CONTEXT.md). */
+/** The Sidebar Modes. */
 enum class SidebarMode {
     Persistent,
     Collapsed,
@@ -26,7 +27,7 @@ enum class SidebarMode {
             when (tier) {
                 SidebarTier.Tablet -> listOf(Persistent, Collapsed, AutoHide)
                 SidebarTier.LargePhone -> listOf(Collapsed, AutoHide)
-                SidebarTier.Phone -> listOf(AutoHide)
+                SidebarTier.Phone -> listOf(Collapsed, AutoHide)
                 SidebarTier.None -> emptyList()
             }
 
@@ -72,8 +73,17 @@ enum class SidebarMode {
 /** Which edge the Sidebar docks on (Sideraven Settings). */
 enum class SidebarSide { Left, Right }
 
+/** Which of Android's system bars Sideraven hides, for a full-screen browser (Sideraven Settings). Opt-in. */
+enum class FullScreen { Off, StatusBar, Both }
+
 /** Where new tabs appear in the Tab List (Sideraven Settings). */
 enum class NewTabPosition { Top, Bottom }
+
+/**
+ * Tab List Direction: whether the Tab List starts under the Pinned Tabs and grows down, or sits on the
+ * bottom edge, by the address bar, and grows up (its Inactive and Desktop Tabs sections then above the tabs).
+ */
+enum class TabListDirection { TopDown, BottomUp }
 
 /** The Sidebar's width in Persistent Mode (Sideraven Settings). */
 enum class SidebarWidth(
@@ -109,7 +119,7 @@ enum class AnimationLevel { Full, Reduced, Off }
 /** Which tab rows show a Tab Close Button (Sideraven Settings). */
 enum class CloseButtons { SelectedTab, EveryTab }
 
-/** Where the page's address lives (CONTEXT.md, "Address Bar Layout"). */
+/** Where the page's address lives. */
 enum class AddressBarLayout {
     Top,
     Sidebar,
@@ -119,7 +129,7 @@ enum class AddressBarLayout {
     val other: AddressBarLayout get() = if (this == Top) Sidebar else Top
 }
 
-/** What New Tab opens (CONTEXT.md, "New Tab Behaviour"). */
+/** What New Tab opens. */
 enum class NewTabBehaviour { Search, HomePage, Blank }
 
 /**
@@ -262,24 +272,57 @@ open class SidebarModeStore(
     /** Where the Sidebar Flap sits along the edge: 0 at the top, 1 at the bottom. */
     val flapPosition = number(KEY_FLAP_POSITION, 0.5f)
 
-    /** Collapsed Mode: the share of the Sidebar's height the Essentials Section may take. */
-    val essentialsShare = number(KEY_ESSENTIALS_SHARE, DEFAULT_SECTION_SHARE)
+    private val arrangedEssentialsPortrait = number(KEY_ARRANGED_ESSENTIALS_PORTRAIT, NOT_ARRANGED)
+    private val arrangedPinnedPortrait = number(KEY_ARRANGED_PINNED_PORTRAIT, NOT_ARRANGED)
+    private val arrangedEssentialsLandscape = number(KEY_ARRANGED_ESSENTIALS_LANDSCAPE, NOT_ARRANGED)
+    private val arrangedPinnedLandscape = number(KEY_ARRANGED_PINNED_LANDSCAPE, NOT_ARRANGED)
 
-    /** Collapsed Mode: the share of the Sidebar's height the Pinned Tabs may take. */
-    val pinnedShare = number(KEY_PINNED_SHARE, DEFAULT_SECTION_SHARE)
-
-    /** The share setting for [section]. */
-    fun sectionShare(section: CollapsedSection): Setting<Float> =
+    /** The share Arrange Mode set for [section] in one orientation; negative while it isn't arranged. */
+    fun arrangedShare(
+        section: CollapsedSection,
+        landscape: Boolean,
+    ): Setting<Float> =
         when (section) {
-            CollapsedSection.Essentials -> essentialsShare
-            CollapsedSection.Pinned -> pinnedShare
+            CollapsedSection.Essentials -> if (landscape) arrangedEssentialsLandscape else arrangedEssentialsPortrait
+            CollapsedSection.Pinned -> if (landscape) arrangedPinnedLandscape else arrangedPinnedPortrait
+        }
+
+    /** Remembers [share] for [section] in one orientation; null clears it. */
+    fun arrange(
+        section: CollapsedSection,
+        landscape: Boolean,
+        share: Float?,
+    ) = arrangedShare(section, landscape).set(share ?: NOT_ARRANGED)
+
+    /** The sizes Arrange Mode set for one orientation. */
+    fun arrangedShares(landscape: Boolean): ArrangedShares =
+        ArrangedShares(
+            essentials = arrangedShare(CollapsedSection.Essentials, landscape).value.asArranged(),
+            pinned = arrangedShare(CollapsedSection.Pinned, landscape).value.asArranged(),
+        )
+
+    /** Synced Tabs' Control Place: In the menu until moved, so 1.0's Sidebar row stays as it was. */
+    val syncedTabsPlace = choice(KEY_SYNCED_TABS_PLACE, ControlPlace.InMenu)
+
+    /** The Toggle's Control Place. */
+    val togglePlace = choice(KEY_TOGGLE_PLACE, ControlPlace.InSidebar)
+
+    /** The layout button's Control Place. */
+    val layoutButtonPlace = choice(KEY_LAYOUT_BUTTON_PLACE, ControlPlace.InSidebar)
+
+    /** The Control Place setting of [control]. */
+    fun controlPlace(control: OptionalControl): Setting<ControlPlace> =
+        when (control) {
+            OptionalControl.SyncedTabs -> syncedTabsPlace
+            OptionalControl.Toggle -> togglePlace
+            OptionalControl.LayoutButton -> layoutButtonPlace
         }
 
     /** What New Tab opens. */
     val newTabBehaviour = choice(KEY_NEW_TAB, NewTabBehaviour.Search)
 
     /** The chosen Address Bar Layout. */
-    val addressBarLayout = choice(KEY_LAYOUT, AddressBarLayout.Top)
+    val addressBarLayout = choice(KEY_LAYOUT, AddressBarLayout.Sidebar)
 
     /** Search Pop-up: hiding the keyboard closes it while nothing has been typed. Off by default: hiding it makes room to scroll. */
     val popupCloseOnKeyboardHide = flag(KEY_POPUP_KEYBOARD, false)
@@ -293,6 +336,9 @@ open class SidebarModeStore(
     /** Where new tabs appear in the Tab List. */
     val newTabPosition = choice(KEY_NEW_TAB_POSITION, NewTabPosition.Top)
 
+    /** Whether the Tab List grows down from the top or up from the bottom. */
+    val tabListDirection = choice(KEY_TAB_LIST_DIRECTION, TabListDirection.TopDown)
+
     /** Which edge the Sidebar docks on. */
     val sidebarSide = choice(KEY_SIDE, SidebarSide.Left)
 
@@ -302,11 +348,26 @@ open class SidebarModeStore(
     /** Whether swiping a tab row left closes it (Tab Close Gesture). */
     val swipeToClose = flag(KEY_SWIPE_TO_CLOSE, true)
 
+    /** Whether swiping the Sidebar Address Bar up opens a new tab. */
+    val addressSwipeNewTab = flag(KEY_ADDRESS_SWIPE_NEW_TAB, true)
+
+    /** Whether swiping the Sidebar Address Bar sideways switches to the next or previous tab. */
+    val addressSwipeTabs = flag(KEY_ADDRESS_SWIPE_TABS, true)
+
     /** How many Essentials sit in a row. */
     val essentialsPerRow = choice(KEY_ESSENTIALS_PER_ROW, EssentialsPerRow.Auto)
 
     /** Whether the Sidebar ticks under the finger (haptic feedback). */
     val haptics = flag(KEY_HAPTICS, true)
+
+    /** Whether the current Space's colours tint the frame (Space themes). */
+    val spaceThemes = flag(KEY_SPACE_THEMES, true)
+
+    /** Which system bars are hidden for a full-screen browser. */
+    val fullScreen = choice(KEY_FULL_SCREEN, FullScreen.Off)
+
+    /** Whether the dark theme is pure black, for OLED screens; it replaces Space themes. */
+    val pureBlack = flag(KEY_PURE_BLACK, false)
 
     /** The accent colour (a Space palette key); Spaces on the default colour follow it. */
     val accent = text(KEY_ACCENT, DEFAULT_SPACE_ACCENT)
@@ -383,8 +444,14 @@ open class SidebarModeStore(
         const val KEY_PHONE_SIDEBAR = "phone_sidebar"
         const val KEY_PHONE_SWIPE_ZONE = "phone_swipe_zone_enabled"
         const val KEY_FLAP_POSITION = "flap_position"
-        const val KEY_ESSENTIALS_SHARE = "collapsed_essentials_share"
-        const val KEY_PINNED_SHARE = "collapsed_pinned_share"
+        const val KEY_TOGGLE_PLACE = "toggle_place"
+        const val KEY_ARRANGED_ESSENTIALS_PORTRAIT = "arranged_essentials_portrait"
+        const val KEY_ARRANGED_PINNED_PORTRAIT = "arranged_pinned_portrait"
+        const val KEY_ARRANGED_ESSENTIALS_LANDSCAPE = "arranged_essentials_landscape"
+        const val KEY_ARRANGED_PINNED_LANDSCAPE = "arranged_pinned_landscape"
+        const val NOT_ARRANGED = -1f
+        const val KEY_SYNCED_TABS_PLACE = "synced_tabs_place"
+        const val KEY_LAYOUT_BUTTON_PLACE = "layout_button_place"
         const val KEY_NEW_TAB = "new_tab_behaviour"
         const val KEY_LAYOUT = "address_bar_layout"
         const val KEY_POPUP_KEYBOARD = "popup_close_on_keyboard_hide"
@@ -400,6 +467,12 @@ open class SidebarModeStore(
         const val KEY_ACCENT = "accent"
         const val KEY_ESSENTIALS_PER_ROW = "essentials_per_row"
         const val KEY_SWIPE_TO_CLOSE = "swipe_to_close"
+        const val KEY_TAB_LIST_DIRECTION = "tab_list_direction"
+        const val KEY_SPACE_THEMES = "space_themes"
+        const val KEY_PURE_BLACK = "pure_black"
+        const val KEY_FULL_SCREEN = "full_screen"
+        const val KEY_ADDRESS_SWIPE_NEW_TAB = "address_swipe_new_tab"
+        const val KEY_ADDRESS_SWIPE_TABS = "address_swipe_tabs"
         const val KEY_CLOSE_BUTTONS = "close_buttons"
     }
 }
@@ -428,3 +501,23 @@ object PreferencesSidebarModeStore {
 /** Watches a [Setting] from a composable. */
 @Composable
 fun <T> Setting<T>.collectAsState(): State<T> = flow.collectAsState()
+
+/** The sizes Arrange Mode set for one orientation, as Compose state. */
+@Composable
+fun SidebarModeStore.collectArrangedShares(landscape: Boolean): ArrangedShares {
+    val essentials by arrangedShare(CollapsedSection.Essentials, landscape).collectAsState()
+    val pinned by arrangedShare(CollapsedSection.Pinned, landscape).collectAsState()
+    return ArrangedShares(essentials.asArranged(), pinned.asArranged())
+}
+
+/** A stored arranged share, or null for the "not arranged" value. */
+private fun Float.asArranged(): Float? = takeIf { it >= 0f }
+
+/** Every Optional Control's Control Place, as Compose state. */
+@Composable
+fun SidebarModeStore.collectControlPlaces(): ControlPlaces {
+    val syncedTabs by syncedTabsPlace.collectAsState()
+    val toggle by togglePlace.collectAsState()
+    val layoutButton by layoutButtonPlace.collectAsState()
+    return ControlPlaces(syncedTabs = syncedTabs, toggle = toggle, layoutButton = layoutButton)
+}

@@ -4,9 +4,12 @@
 
 package pt.dweep.sideraven.ui
 
+import pt.dweep.sideraven.theme.SidebarFill
+import pt.dweep.sideraven.theme.sidebarFill
 import pt.dweep.sideraven.UnloadOthersFrom
 import pt.dweep.sideraven.SidebarSpace
 import androidx.compose.animation.core.snap
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
@@ -88,7 +92,7 @@ import pt.dweep.sideraven.SidebarPinnedTab
 private const val PIN_GHOST_ALPHA = 0.45f
 
 /**
- * The current Space's Pinned Tabs (CONTEXT.md, "Pinned Tab"), above its Tab List. Scrolls by
+ * The current Space's Pinned Tabs, above its Tab List. Scrolls by
  * itself past [maxHeight] so pins never push the tabs off screen.
  */
 @Composable
@@ -100,7 +104,9 @@ internal fun PinnedTabsBlock(
     rows: List<SidebarPinnedRow> = emptyList(),
     folders: List<SidebarFolder> = emptyList(),
     dropTarget: DropTarget = DropTarget.None,
-    // While its Divider is dragged, the block follows the finger instead of animating.
+    // The block's scroll, so Section Sizing can see how much it holds.
+    scroll: ScrollState = rememberScrollState(),
+    // While Arrange Mode's grab bar is dragged, the height follows the finger instead of animating to it.
     resizing: Boolean = false,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -135,7 +141,7 @@ internal fun PinnedTabsBlock(
                 .animateHeight(if (resizing) snap() else LocalSidebarMotion.current.move(SideravenMotion.ITEM_ENTER_MS, SideravenMotion.EaseInOutStrong))
                 .then(outline)
                 .heightIn(max = maxHeight)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scroll)
                 .padding(vertical = 4.dp)
                 .testTag(SidebarTestTag.PINNED_TABS),
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -282,7 +288,7 @@ private fun PinnedTabRow(
                 .height(LocalSidebarLook.current.tabRows.pinnedDp.dp)
                 .padding(horizontal = 8.dp)
                 .clip(MaterialTheme.shapes.small)
-                .background(if (pin.isSelected || dragging) colors.surfaceContainerHigh else colors.surface)
+                .background(if (dragging) colors.surfaceContainerHigh else if (pin.isSelected) sidebarFill(SidebarFill.High) else Color.Transparent)
                 .clickable(role = Role.Button) { if (!dragging) onIntent(SidebarIntent.SelectPinnedTab(pin.id)) }
                 .semantics {
                     contentDescription = pin.title
@@ -554,7 +560,7 @@ private fun FolderRow(
                 .height(40.dp)
                 .padding(horizontal = 8.dp)
                 .clip(MaterialTheme.shapes.small)
-                .background(if (dragging) colors.surfaceContainerHigh else colors.surface)
+                .background(if (dragging) colors.surfaceContainerHigh else Color.Transparent)
                 .clickable(role = Role.Button) {
                     if (dragging) return@clickable
                     // Collapsed Mode has no room to expand in place: a popup lists the Folder's pins.

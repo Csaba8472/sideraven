@@ -29,7 +29,7 @@ import pt.dweep.sideraven.essentialsGridColumns
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 08: Essentials per row. */
+/** Essentials per row. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class EssentialsPerRowTest {
@@ -75,13 +75,15 @@ class EssentialsPerRowTest {
     }
 
     @Test
-    fun `THEN it is a radio list writing the store`() {
+    fun `THEN it is a row showing its value, writing the store`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val screen = PreferenceManager(context).createPreferenceScreen(context)
         val store = InMemorySidebarModeStore()
 
-        SidebarPreferences.bindEssentialsPerRow(context, screen, store, context.getSharedPreferences("radio-test", 0))
-            .first { it.key.endsWith(".Four") }.callChangeListener(true)
+        val row = SidebarPreferences.bindEssentialsPerRow(context, screen, store)
+        assertEquals("Automatic", row.summary.toString())
+        row.choose(EssentialsPerRow.Four)
+        assertEquals("4", row.summary.toString())
 
         assertEquals(EssentialsPerRow.Four, store.essentialsPerRow.value)
     }

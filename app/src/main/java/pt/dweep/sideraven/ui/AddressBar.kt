@@ -4,8 +4,26 @@
 
 package pt.dweep.sideraven.ui
 
+import pt.dweep.sideraven.theme.SidebarFill
+import pt.dweep.sideraven.theme.sidebarFill
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.launch
+import kotlin.math.abs
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -26,6 +44,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -33,7 +53,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.semantics
@@ -49,16 +71,29 @@ import pt.dweep.sideraven.theme.SideravenMotion
 import mozilla.components.ui.icons.R as iconsR
 
 /**
- * The Sidebar Address Bar (CONTEXT.md): the selected tab's domain with its security icon and a
+ * The Sidebar Address Bar: the selected tab's domain with its security icon and a
  * loading line, and back, forward and reload/stop. Tapping the address opens the Search Pop-up.
+ * Swiping it up opens a new tab; swiping it left or right selects [nextTab] or [previousTab].
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun AddressBar(
     address: SidebarAddress,
     onIntent: (SidebarIntent) -> Unit,
+    previousTab: String? = null,
+    nextTab: String? = null,
 ) {
     val colors = MaterialTheme.colorScheme
+    val look = LocalSidebarLook.current
+    val swipes =
+        AddressSwipes(
+            newTab = look.addressSwipeNewTab,
+            previousTab = previousTab.takeIf { look.addressSwipeTabs },
+            nextTab = nextTab.takeIf { look.addressSwipeTabs },
+        )
+    val newTabLabel = stringResource(R.string.sideraven_new_tab)
+    val previousLabel = stringResource(R.string.sideraven_previous_tab)
+    val nextLabel = stringResource(R.string.sideraven_next_tab)
     val backLabel = stringResource(R.string.sideraven_address_back)
     val historyLabel = stringResource(R.string.sideraven_address_history)
     val unavailableLabel = stringResource(R.string.sideraven_address_unavailable)
@@ -67,8 +102,31 @@ internal fun AddressBar(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp, vertical = 4.dp)
+                .addressSwipes(swipes, onIntent)
                 .clip(MaterialTheme.shapes.small)
-                .background(colors.surfaceContainer)
+                .background(sidebarFill(SidebarFill.Container))
+                .semantics {
+                    // TalkBack: the swipes as actions.
+                    customActions =
+                        listOfNotNull(
+                            CustomAccessibilityAction(newTabLabel) {
+                                onIntent(SidebarIntent.NewTab)
+                                true
+                            }.takeIf { swipes.newTab },
+                            swipes.nextTab?.let { id ->
+                                CustomAccessibilityAction(nextLabel) {
+                                    onIntent(SidebarIntent.SelectTab(id))
+                                    true
+                                }
+                            },
+                            swipes.previousTab?.let { id ->
+                                CustomAccessibilityAction(previousLabel) {
+                                    onIntent(SidebarIntent.SelectTab(id))
+                                    true
+                                }
+                            },
+                        )
+                }
                 .testTag(SidebarTestTag.ADDRESS_BAR),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -185,7 +243,7 @@ private fun AddressPill(
                 // A field inside the bar, as Fenix's own search box.
                 .padding(start = 6.dp, top = 6.dp, bottom = 6.dp)
                 .clip(MaterialTheme.shapes.small)
-                .background(colors.surfaceContainerHighest)
+                .background(sidebarFill(SidebarFill.Highest))
                 .combinedClickable(role = Role.Button, onClick = { onIntent(SidebarIntent.OpenSearch(newTab = false)) })
                 .semantics {
                     contentDescription = if (address.isHome) placeholder else "$addressLabel: ${address.domain}"
@@ -276,3 +334,77 @@ private fun BarIcon(
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
+
+/** What the Sidebar Address Bar's swipes do: up for a new tab, left for [nextTab], right for [previousTab]. */
+internal data class AddressSwipes(
+    val newTab: Boolean,
+    val previousTab: String?,
+    val nextTab: String?,
+)
+
+/** How far a swipe must go before letting go acts. */
+private const val ADDRESS_SWIPE_THRESHOLD_DP = 48
+
+/** How much of the finger's travel the bar follows, so the swipe is felt but the bar stays put. */
+private const val ADDRESS_SWIPE_FOLLOW = 0.25f
+
+/**
+ * The Sidebar Address Bar's swipes. A swipe claims the gesture once it passes the touch slop along an
+ * axis that does something, so taps and long-presses on the bar's buttons still work. The bar follows
+ * the finger a little, ticks when letting go will act, and springs back.
+ */
+private fun Modifier.addressSwipes(
+    swipes: AddressSwipes,
+    onIntent: (SidebarIntent) -> Unit,
+): Modifier =
+    composed {
+        val current by rememberUpdatedState(swipes)
+        val currentOnIntent by rememberUpdatedState(onIntent)
+        val haptics = LocalHapticFeedback.current
+        val motion = LocalSidebarMotion.current
+        val threshold = with(LocalDensity.current) { ADDRESS_SWIPE_THRESHOLD_DP.dp.toPx() }
+        val scope = rememberCoroutineScope()
+        val follow = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+        graphicsLayer {
+            translationX = follow.value.x
+            translationY = follow.value.y
+        }.pointerInput(Unit) {
+            awaitEachGesture {
+                val down = awaitFirstDown(requireUnconsumed = false)
+                var total = Offset.Zero
+                var vertical: Boolean? = null
+                var action: SidebarIntent? = null
+                while (true) {
+                    val event = awaitPointerEvent()
+                    val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                    if (!change.pressed) break
+                    total += change.positionChange()
+                    val swipe = current
+                    if (vertical == null && total.getDistance() > viewConfiguration.touchSlop) {
+                        val up = abs(total.y) > abs(total.x)
+                        // Claim only an axis that does something; otherwise leave the gesture to the bar's buttons.
+                        val acts = if (up) swipe.newTab else swipe.previousTab != null || swipe.nextTab != null
+                        if (!acts) break
+                        vertical = up
+                    }
+                    if (vertical == null) continue
+                    change.consume()
+                    val along = if (vertical == true) Offset(0f, total.y.coerceAtMost(0f)) else Offset(total.x, 0f)
+                    scope.launch(start = CoroutineStart.UNDISPATCHED) { follow.snapTo(along * ADDRESS_SWIPE_FOLLOW) }
+                    val armed =
+                        when {
+                            vertical == true && total.y < -threshold && swipe.newTab -> SidebarIntent.NewTab
+                            vertical == false && total.x < -threshold -> swipe.nextTab?.let { SidebarIntent.SelectTab(it) }
+                            vertical == false && total.x > threshold -> swipe.previousTab?.let { SidebarIntent.SelectTab(it) }
+                            else -> null
+                        }
+                    if (armed != null && action == null) haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                    action = armed
+                }
+                if (vertical != null) {
+                    scope.launch { follow.animateTo(Offset.Zero, motion.springSettle(Offset.VisibilityThreshold)) }
+                    action?.let(currentOnIntent)
+                }
+            }
+        }
+    }

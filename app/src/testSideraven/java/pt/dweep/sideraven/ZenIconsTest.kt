@@ -23,7 +23,7 @@ import pt.dweep.sideraven.theme.SideravenTheme
 import pt.dweep.sideraven.ui.SidebarContent
 import pt.dweep.sideraven.ui.SidebarTestTag
 
-/** Spaces ticket 04: Zen's icon set for Spaces and Folders. */
+/** Zen's icon set for Spaces and Folders. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class ZenIconsTest {

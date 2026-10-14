@@ -15,7 +15,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spaces ticket 08: reordering Pinned Tabs and moving pins between Essentials and a Space. */
+/** Reordering Pinned Tabs and moving pins between Essentials and a Space. */
 @RunWith(AndroidJUnit4::class)
 class PinnedTabsDragTest {
     private val essentialsRepository = InMemoryEssentialsRepository()

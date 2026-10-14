@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -42,7 +43,8 @@ import org.mozilla.fenix.theme.Theme
  */
 @Composable
 fun PrivateBrowsingDescription(onLearnMoreClick: () -> Unit) {
-    Surface {
+    // SIDERAVEN-HOOK: no block of its own colour; it sits on the home page (one tone inside the frame)
+    Surface(color = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

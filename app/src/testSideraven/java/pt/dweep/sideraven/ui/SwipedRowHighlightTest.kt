@@ -23,7 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Polish round 2 ticket 05: a row being swiped knows it, so it can show it's being touched. */
+/** A row being swiped knows it, so it can show it's being touched. */
 @RunWith(AndroidJUnit4::class)
 class SwipedRowHighlightTest {
     @get:Rule

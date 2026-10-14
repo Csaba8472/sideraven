@@ -8,7 +8,7 @@ import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.BrowserState
 
 /**
- * An Essential or Pinned Tab got a new address from Zen Sync (spec 0008). Its open tab follows
+ * An Essential or Pinned Tab got a new address from Zen Sync. Its open tab follows
  * only while it is still on the old pinned page; a tab the user browsed away stays where it is,
  * and Reset goes to the new address.
  */

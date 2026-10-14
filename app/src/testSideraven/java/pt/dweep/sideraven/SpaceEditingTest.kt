@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 import pt.dweep.sideraven.theme.SpaceAccents
 import pt.dweep.sideraven.theme.zenColorScheme
 
-/** Spaces ticket 03: edit, reorder and delete Spaces; the accent palette. */
+/** Edit, reorder and delete Spaces; the accent palette. */
 @RunWith(AndroidJUnit4::class)
 class SpaceEditingTest {
     private val spaces = Spaces(InMemorySpacesRepository())

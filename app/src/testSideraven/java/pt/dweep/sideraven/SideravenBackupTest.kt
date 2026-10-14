@@ -17,7 +17,7 @@ import pt.dweep.sideraven.sync.InMemoryBlobStore
 import pt.dweep.sideraven.sync.ZenBlobs
 import pt.dweep.sideraven.sync.ZenOrigin
 
-/** v1 prep ticket 01: a backup file restores Spaces, Essentials and settings on a fresh install. */
+/** A backup file restores Spaces, Essentials and settings on a fresh install. */
 @RunWith(AndroidJUnit4::class)
 class SideravenBackupTest {
     private val icon = "data:image/png;base64," + "iVBORw0KGgo".repeat(400)

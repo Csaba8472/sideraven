@@ -221,6 +221,9 @@ object ZenWire {
         return ZenLayout(id, strings(data, "spaces"), buckets, data)
     }
 
+    /** The theme in a Space record's [data], if it has one. */
+    fun themeOf(data: JSONObject): ZenTheme? = (data.opt("theme") as? JSONObject)?.let(::theme)
+
     private fun theme(json: JSONObject): ZenTheme {
         val dots =
             (json.opt("gradientColors") as? JSONArray)?.let { list ->

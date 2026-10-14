@@ -15,7 +15,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Ticket 12 (+ 14's leftovers): what drops between sections do to real state. */
+/** What drops between sections do to real state. */
 class DragBetweenSectionsTest {
     private val now = 100_000_000L
     private val old = now - 50_000L

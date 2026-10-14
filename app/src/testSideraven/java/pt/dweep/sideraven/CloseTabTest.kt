@@ -11,7 +11,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-/** Ticket 04: closing tabs from the Sidebar, against a real in-memory browser store. */
+/** Closing tabs from the Sidebar, against a real in-memory browser store. */
 class CloseTabTest {
     private lateinit var store: BrowserStore
     private val closed = mutableListOf<Pair<Boolean, Boolean>>()

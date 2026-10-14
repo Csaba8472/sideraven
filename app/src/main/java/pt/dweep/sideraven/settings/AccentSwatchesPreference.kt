@@ -18,7 +18,7 @@ import pt.dweep.sideraven.theme.SpaceAccents
 import pt.dweep.sideraven.ui.accentLabel
 
 /**
- * The accent colour as a row of swatches, one per Space colour (spec 0008): the chosen one is
+ * The accent colour as a row of swatches, one per Space colour: the chosen one is
  * ringed. Each swatch is a button named after its colour for screen readers.
  */
 class AccentSwatchesPreference(

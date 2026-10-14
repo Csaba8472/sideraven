@@ -141,7 +141,7 @@ internal class HomeToolbarComposable(
         FirefoxTheme {
             MaterialTheme(
                 colorScheme =
-                    // SIDERAVEN-HOOK: beside a Sidebar the toolbar takes its colour (spec 0008)
+                    // SIDERAVEN-HOOK: beside a Sidebar the toolbar takes its colour
                     pt.dweep.sideraven.SidebarToolbarColors.scheme(homepageToolbarColors(
                         isPrivateMode = isPrivateMode,
                         shouldUseEdgeToEdgeColors =

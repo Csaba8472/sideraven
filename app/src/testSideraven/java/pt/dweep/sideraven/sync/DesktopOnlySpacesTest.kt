@@ -18,7 +18,7 @@ import pt.dweep.sideraven.InMemoryEssentialsRepository
 import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.Spaces
 
-/** Spec 0007 ticket 02: switching a desktop Space off (Desktop-only Space) and back on. */
+/** Switching a desktop Space off (Desktop-only Space) and back on. */
 @RunWith(AndroidJUnit4::class)
 class DesktopOnlySpacesTest {
     private val server = FakeSyncServer()

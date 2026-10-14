@@ -26,7 +26,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 import kotlin.math.abs
 
-/** Spec 0008 ticket 10 (audit 5 and 8): Space switches and mode changes without double exposure or jumps. */
+/** Space switches and mode changes without double exposure or jumps. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SpaceAndModeMotionTest {

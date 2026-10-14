@@ -13,7 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
-/** Ticket 09: Duplicate from the Tab Context Menu, with Fenix's real use case and store. */
+/** Duplicate from the Tab Context Menu, with Fenix's real use case and store. */
 class TabContextMenuTest {
     private val store =
         BrowserStore(middleware = listOf(NewTabPositionMiddleware())).apply {

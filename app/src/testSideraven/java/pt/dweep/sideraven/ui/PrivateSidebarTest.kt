@@ -28,7 +28,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 import pt.dweep.sideraven.toSidebarUiState
 
-/** Polish round 2 ticket 06: the private Sidebar is a title, the private tabs and the controls. */
+/** The private Sidebar is a title, the private tabs and the controls. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class PrivateSidebarTest {

@@ -23,7 +23,7 @@ import pt.dweep.sideraven.Spaces
 import java.io.ByteArrayOutputStream
 import java.util.Base64
 
-/** Spec 0008 ticket 05: desktop's favicons arrive with Zen Sync for items not open here. */
+/** Desktop's favicons arrive with Zen Sync for items not open here. */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class DesktopIconsSyncTest {

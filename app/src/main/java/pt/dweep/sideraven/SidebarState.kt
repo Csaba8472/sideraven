@@ -66,8 +66,9 @@ enum class SidebarScreen {
  * is shown flat.
  * @property folders The current Space's Folders, for "Move to folder".
  * @property spacePinBlock Why "Pin to space" is unavailable right now; null when it's available.
- * @property sectionShares How much of the Sidebar's height the Essentials Section and the Pinned
- * Tabs may take in Collapsed Mode before they scroll.
+ * @property controlPlaces The Control Place of each Optional Control.
+ * @property arranging Whether Arrange Mode is on (Collapsed Mode only).
+ * @property arranged The sizes set in Arrange Mode for this orientation.
  */
 data class SidebarUiState(
     val isVisible: Boolean,
@@ -85,7 +86,9 @@ data class SidebarUiState(
     val look: SidebarLook = SidebarLook(),
     val showsFlap: Boolean = false,
     val flapPosition: Float = 0.5f,
-    val sectionShares: SectionShares = SectionShares(),
+    val controlPlaces: ControlPlaces = ControlPlaces(),
+    val arranging: Boolean = false,
+    val arranged: ArrangedShares = ArrangedShares(),
     val spaces: List<SidebarSpace> = emptyList(),
     val pinned: List<SidebarPinnedTab> = emptyList(),
     val syncProblem: Boolean = false,
@@ -103,6 +106,12 @@ data class SidebarUiState(
     val pinnedRows: List<SidebarPinnedRow> = emptyList(),
     val folders: List<SidebarFolder> = emptyList(),
 ) {
+    /**
+     * The Sidebar Controls, in order. The row and the Collapsed column draw from this; the column
+     * also leaves out the layout button while a mode change is still widening or narrowing the Sidebar.
+     */
+    val controls: List<SidebarControlKind> get() = sidebarControls(nextMode, layoutMovable, controlPlaces)
+
     /** Every tab in the Tab List, active and inactive. */
     val allTabs: List<SidebarTab> get() = tabs + inactive?.tabs.orEmpty()
 
@@ -131,7 +140,7 @@ data class SidebarTab(
     val icon: Bitmap?,
     val isSelected: Boolean,
     val audio: TabAudio = TabAudio.None,
-    /** Sleeping (CONTEXT.md): Unloaded, or not loaded yet; its page reloads when opened. */
+    /** Sleeping: Unloaded, or not loaded yet; its page reloads when opened. */
     val sleeping: Boolean = false,
 )
 
@@ -147,40 +156,43 @@ data class SidebarLook(
     val haptics: Boolean = true,
     val animations: AnimationLevel = AnimationLevel.Full,
     val roundedFrame: Boolean = true,
+    /** Whether the Tab List grows down from the top or up from the bottom (Tab List Direction). */
+    val tabListDirection: TabListDirection = TabListDirection.TopDown,
+    /** Swiping the Sidebar Address Bar up opens a new tab. */
+    val addressSwipeNewTab: Boolean = true,
+    /** Swiping the Sidebar Address Bar sideways selects the next or previous tab. */
+    val addressSwipeTabs: Boolean = true,
 )
 
-/** The sections above the Tab List whose Divider can be dragged in Collapsed Mode. */
-enum class CollapsedSection { Essentials, Pinned }
-
-/** How much of the Sidebar's height each section may take in Collapsed Mode before it scrolls. */
-data class SectionShares(
-    val essentials: Float = DEFAULT_SECTION_SHARE,
-    val pinned: Float = DEFAULT_SECTION_SHARE,
-) {
-    operator fun get(section: CollapsedSection): Float =
-        when (section) {
-            CollapsedSection.Essentials -> essentials
-            CollapsedSection.Pinned -> pinned
-        }
-}
-
-/** A third of the Sidebar's height each, as before the Dividers could be dragged. */
-const val DEFAULT_SECTION_SHARE = 1f / 3f
-
-/** A section can't be dragged smaller than this share, nor larger than [MAX_SECTION_SHARE]. */
-const val MIN_SECTION_SHARE = 0.05f
-
-/** Leaves the Tab List room under the sections. */
-const val MAX_SECTION_SHARE = 0.6f
+/** The Sidebar Controls, in the order the row (or Collapsed Mode's column) shows them. */
+enum class SidebarControlKind { NewTab, BrowsingModeSwitch, SyncedTabs, Toggle, LayoutButton }
 
 /**
- * Desktop Tabs (CONTEXT.md): the current synced Space's open tabs on Zen desktop, read-only,
+ * The Sidebar Controls shown: New Tab and the Browsing Mode Switch always; Synced Tabs; the Toggle
+ * where the tier has another mode to switch to ([nextMode]); and the layout button where the address
+ * can move. Synced Tabs, the Toggle and the layout button only while they're In the sidebar.
+ */
+fun sidebarControls(
+    nextMode: SidebarMode?,
+    layoutMovable: Boolean,
+    places: ControlPlaces = ControlPlaces(),
+): List<SidebarControlKind> =
+    buildList {
+        add(SidebarControlKind.NewTab)
+        add(SidebarControlKind.BrowsingModeSwitch)
+        if (places.syncedTabs == ControlPlace.InSidebar) add(SidebarControlKind.SyncedTabs)
+        if (nextMode != null && places.toggle == ControlPlace.InSidebar) add(SidebarControlKind.Toggle)
+        if (layoutMovable && places.layoutButton == ControlPlace.InSidebar) add(SidebarControlKind.LayoutButton)
+    }
+
+/**
+ * Desktop Tabs: the current synced Space's open tabs on Zen desktop, read-only,
  * at the end of the Tab List.
  */
 data class SidebarDesktopTabs(
     val tabs: List<pt.dweep.sideraven.sync.DesktopTab>,
     val expanded: Boolean,
-    /** Known icons by address (spec 0008); rows without one use the favicon loader. */
+    /** Known icons by address; rows without one use the favicon loader. */
     val icons: Map<String, Bitmap> = emptyMap(),
 )
 
@@ -201,7 +213,7 @@ data class SidebarInactiveSection(
 enum class AddressSecurity { Secure, Insecure, None }
 
 /**
- * The Sidebar Address Bar (CONTEXT.md).
+ * The Sidebar Address Bar.
  *
  * @property domain The page's host without "www.", or the URL for non-web pages.
  * @property isHome No page is shown (the home screen): the bar shows its placeholder.
@@ -286,7 +298,7 @@ private fun addressPin(
         spaces?.pinned?.firstOrNull { it.id == pinId }?.url?.let { AddressPin.OfPinnedTab(pinId, navigatedAway = tab.content.url != it) }
     }
 
-/** One Space in the Space icon row (CONTEXT.md, "Space"). */
+/** One Space in the Space icon row. */
 data class SidebarSpace(
     val id: String,
     val name: String,
@@ -333,7 +345,7 @@ data class SidebarPinnedTab(
     val linkedTabId: String?,
     val isSelected: Boolean,
     val folderId: String? = null,
-    /** Its tab is Sleeping (CONTEXT.md). */
+    /** Its tab is Sleeping. */
     val sleeping: Boolean = false,
 ) {
     val isGhost: Boolean get() = linkedTabId == null
@@ -344,7 +356,7 @@ enum class TabAudio { None, Playing, Muted }
 
 /**
  * Essentials per row in Persistent Mode. [EssentialsPerRow.Auto]: 1–3 Essentials stretch across
- * one row as larger tiles, 4 or more use 4 columns (CONTEXT.md, "Essentials Section"); a fixed
+ * one row as larger tiles, 4 or more use 4 columns; a fixed
  * choice always uses that many columns.
  */
 fun essentialsGridColumns(
@@ -373,7 +385,7 @@ data class SidebarEssential(
     val linkedTabId: String?,
     val isSelected: Boolean,
     val navigatedAway: Boolean = false,
-    /** Its tab is Sleeping (CONTEXT.md). */
+    /** Its tab is Sleeping. */
     val sleeping: Boolean = false,
 ) {
     val isGhost: Boolean get() = linkedTabId == null
@@ -383,7 +395,7 @@ data class SidebarEssential(
  * Derives the Sidebar UI state.
  *
  * The Tab List is displayed newest-first: the reverse of the browser's single tab order,
- * which the Tab Tray shows oldest-first (CONTEXT.md, "Tab List").
+ * which the Tab Tray shows oldest-first.
  *
  * @param isPrivate The current Browsing Mode.
  * @param tier The current window's Qualifying Device tier.
@@ -400,7 +412,9 @@ data class SidebarEssential(
  * @param now The current time, for the inactivity check.
  * @param flapEnabled The Sidebar Flap setting.
  * @param flapPosition Where the Sidebar Flap was left along the edge.
- * @param sectionShares Where the Collapsed Mode Dividers were left.
+ * @param controlPlaces The Control Place of each Optional Control.
+ * @param arranging Whether Arrange Mode was started (it shows in Collapsed Mode only).
+ * @param arranged The sizes set in Arrange Mode for this orientation.
  * @param addressBarLayout The chosen Address Bar Layout.
  * @param spaces Stored Spaces; null shows every tab (no Spaces).
  * @param pinnedLinks Pinned Tab id -> its open tab id.
@@ -422,7 +436,9 @@ fun BrowserState.toSidebarUiState(
     now: Long = System.currentTimeMillis(),
     flapEnabled: Boolean = true,
     flapPosition: Float = 0.5f,
-    sectionShares: SectionShares = SectionShares(),
+    controlPlaces: ControlPlaces = ControlPlaces(),
+    arranging: Boolean = false,
+    arranged: ArrangedShares = ArrangedShares(),
     spaces: SpacesData? = null,
     addressBarLayout: AddressBarLayout = AddressBarLayout.Top,
     sidebarWidth: SidebarWidth = SidebarWidth.Standard,
@@ -518,7 +534,9 @@ fun BrowserState.toSidebarUiState(
         // The Flap is the tray's handle: at the edge while hidden, on the Sidebar's edge while open.
         showsFlap = mode == SidebarMode.AutoHide && flapEnabled,
         flapPosition = flapPosition,
-        sectionShares = sectionShares,
+        controlPlaces = controlPlaces,
+        arranging = arranging && mode == SidebarMode.Collapsed,
+        arranged = arranged,
         spaces =
             spacesShown?.spaces?.map {
                 SidebarSpace(
@@ -564,7 +582,7 @@ sealed interface UnloadOthersFrom {
 }
 
 /**
- * Unload Others (CONTEXT.md): the tabs to put to sleep for [from]: the other normal tabs (the
+ * Unload Others: the tabs to put to sleep for [from]: the other normal tabs (the
  * Sidebar state holds the current Space's, in the current Browsing Mode), the other Essential Tabs,
  * or the Space's other Pinned Tabs. Never the pressed one or the tab on screen; Ghosts and
  * sleeping tabs are skipped.
@@ -588,7 +606,7 @@ fun unloadOthersTargets(
                 .mapNotNull { it.linkedTabId }
     }
 
-/** Sleeping (CONTEXT.md): Unloaded and not opened since; the tab on screen never is. */
+/** Sleeping: Unloaded and not opened since; the tab on screen never is. */
 private fun TabSessionState.isSleeping(
     selectedTabId: String?,
     sleepingTabIds: Set<String>,
@@ -676,11 +694,23 @@ sealed interface SidebarIntent {
     /** Opens or closes the Desktop Tabs group (remembered). */
     data object ToggleDesktopTabs : SidebarIntent
 
+    /** "Arrange sidebar" in the Main Menu: Arrange Mode starts (Collapsed Mode only). */
+    data object StartArranging : SidebarIntent
+
+    /** A grab bar was let go: [section] may take [share] of the strip in this orientation; remembered. */
+    data class ArrangeSection(val section: CollapsedSection, val share: Float) : SidebarIntent
+
+    /** Arrange Mode's Done: it ends, keeping the sizes. */
+    data object DoneArranging : SidebarIntent
+
+    /** Arrange Mode's Reset: this orientation goes back to Section Sizing. */
+    data object ResetArrangement : SidebarIntent
+
+    /** Synced Tabs: opens Fenix's synced-tabs page (the tabs open on the user's other devices). */
+    data object OpenSyncedTabs : SidebarIntent
+
     /** The Sidebar Flap was moved along the edge to [position] (0 top, 1 bottom); remembered. */
     data class MoveFlap(val position: Float) : SidebarIntent
-
-    /** A Collapsed Mode Divider was dragged: [section] may now take [share] of the Sidebar's height; remembered. */
-    data class ResizeSection(val section: CollapsedSection, val share: Float) : SidebarIntent
 
     /** Opens one of the Desktop Tabs here: an open tab of this Space at [url], else a new one. */
     data class OpenDesktopTab(val url: String) : SidebarIntent
@@ -794,7 +824,7 @@ sealed interface SidebarIntent {
     /** "Unload" from a normal tab's menu: the tab sleeps. */
     data class UnloadTab(val tabId: String) : SidebarIntent
 
-    /** "Unload others" from a tab's, Essential's or Pinned Tab's menu (CONTEXT.md, "Unload Others"). */
+    /** "Unload others" from a tab's, Essential's or Pinned Tab's menu. */
     data class UnloadOthers(val from: UnloadOthersFrom) : SidebarIntent
 
     /** "Unload" from an Essential's menu. */
@@ -866,12 +896,15 @@ sealed interface SidebarIntent {
  * @param openUrl Opens [url] in a new tab of the current Space (a Desktop Tab).
  * @param setDesktopTabsExpanded Opens or closes the Desktop Tabs group (remembered).
  * @param setFlapPosition Remembers where the Sidebar Flap was moved along the edge.
- * @param setSectionShare Remembers how much of the Sidebar's height a section may take in Collapsed Mode.
+ * @param setArranging Starts or ends Arrange Mode.
+ * @param setArrangedShare Remembers a section's arranged share in this orientation; null clears it.
  * @param showBrowser Shows the browser after something was chosen (leaves Fenix's home screen).
  */
 class SidebarIntentHandler(
     private val selectTab: (tabId: String) -> Unit,
     private val openNewTab: (isPrivate: Boolean) -> Unit,
+    // A Space with no tabs, switched to or just made: its home page, with no search or keyboard.
+    private val openSpaceHome: () -> Unit = { openNewTab(false) },
     private val closeTab: (tabId: String) -> Unit = {},
     private val onTabClosed: (isPrivate: Boolean, wasLastTab: Boolean) -> Unit = { _, _ -> },
     private val setChosenMode: (SidebarMode) -> Unit = {},
@@ -917,7 +950,8 @@ class SidebarIntentHandler(
     private val openUrl: (url: String) -> Unit = {},
     private val setDesktopTabsExpanded: (Boolean) -> Unit = {},
     private val setFlapPosition: (Float) -> Unit = {},
-    private val setSectionShare: (CollapsedSection, Float) -> Unit = { _, _ -> },
+    private val setArranging: (Boolean) -> Unit = {},
+    private val setArrangedShare: (CollapsedSection, Float?) -> Unit = { _, _ -> },
     private val showBrowser: () -> Unit = {},
 ) {
     /** Handles [intent] for a Sidebar currently showing [state]. */
@@ -986,7 +1020,10 @@ class SidebarIntentHandler(
             SidebarIntent.ToggleInactiveSection -> state.inactive?.let { setInactiveExpanded(!it.expanded) }
             SidebarIntent.ToggleDesktopTabs -> state.desktopTabs?.let { setDesktopTabsExpanded(!it.expanded) }
             is SidebarIntent.MoveFlap -> setFlapPosition(intent.position.coerceIn(0f, 1f))
-            is SidebarIntent.ResizeSection -> setSectionShare(intent.section, intent.share.coerceIn(MIN_SECTION_SHARE, MAX_SECTION_SHARE))
+            SidebarIntent.StartArranging -> if (state.mode == SidebarMode.Collapsed) setArranging(true)
+            SidebarIntent.DoneArranging -> setArranging(false)
+            is SidebarIntent.ArrangeSection -> setArrangedShare(intent.section, intent.share.coerceIn(0f, MAX_ARRANGED_SHARE))
+            SidebarIntent.ResetArrangement -> CollapsedSection.entries.forEach { setArrangedShare(it, null) }
             is SidebarIntent.OpenDesktopTab -> {
                 val open = (state.tabs + state.inactive?.tabs.orEmpty()).firstOrNull { it.url == intent.url }
                 if (open != null) selectTab(open.id) else openUrl(intent.url)
@@ -1004,6 +1041,7 @@ class SidebarIntentHandler(
             SidebarIntent.Reveal -> if (state.mode == SidebarMode.AutoHide) setRevealed(true)
             SidebarIntent.Dismiss -> dismissIfRevealed(state)
             SidebarIntent.OpenMenu -> navigation.openMenu(state.address?.isHome ?: true)
+            SidebarIntent.OpenSyncedTabs -> navigation.openSyncedTabs()
             SidebarIntent.OpenSitePanel -> if (state.address?.isHome == false) navigation.openSitePanel()
             SidebarIntent.ToggleAddressBarLayout ->
                 setAddressBarLayout(state.chosenLayout.other)
@@ -1029,7 +1067,7 @@ class SidebarIntentHandler(
                 if (state.isPrivate || intent.name.isBlank()) return
                 // Made here while Zen Sync is on, it stays on this device until switched on.
                 createSpace(intent.name, intent.icon, intent.accent, state.zenSyncOn)
-                openNewTab(false)
+                openSpaceHome()
                 dismissIfRevealed(state)
             }
             is SidebarIntent.EditSpace -> if (intent.name.isNotBlank()) editSpace(intent.spaceId, intent.name, intent.icon, intent.accent)
@@ -1104,7 +1142,7 @@ class SidebarIntentHandler(
         if (target != null) {
             selectTab(target)
         } else {
-            openNewTab(false)
+            openSpaceHome()
             dismissIfRevealed(state)
         }
     }
@@ -1217,4 +1255,6 @@ class AddressNavigation(
     val openMenu: (onHome: Boolean) -> Unit = {},
     /** Fenix's site panel for the selected tab. */
     val openSitePanel: () -> Unit = {},
+    /** Fenix's synced-tabs page. */
+    val openSyncedTabs: () -> Unit = {},
 )

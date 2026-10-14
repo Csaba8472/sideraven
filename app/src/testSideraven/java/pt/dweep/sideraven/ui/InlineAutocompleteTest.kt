@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 05: inline address autocomplete in the Search Pop-up. */
+/** Inline address autocomplete in the Search Pop-up. */
 @OptIn(ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")

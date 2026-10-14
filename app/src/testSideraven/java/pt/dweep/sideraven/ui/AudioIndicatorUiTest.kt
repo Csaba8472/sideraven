@@ -24,7 +24,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.TabAudio
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 15, seam 2: audio indicator and dot. */
+/** Audio indicator and dot. */
 @RunWith(AndroidJUnit4::class)
 class AudioIndicatorUiTest {
     @get:Rule

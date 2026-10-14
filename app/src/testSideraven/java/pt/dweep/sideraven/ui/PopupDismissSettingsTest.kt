@@ -22,7 +22,7 @@ import pt.dweep.sideraven.InMemorySidebarModeStore
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 07: whether hiding the keyboard or tapping outside closes the Search Pop-up. */
+/** Whether hiding the keyboard or tapping outside closes the Search Pop-up. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class PopupDismissSettingsTest {

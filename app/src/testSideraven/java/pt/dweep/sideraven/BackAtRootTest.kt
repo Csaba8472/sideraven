@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Spec 0008 ticket 02: back at the start of a tab's history. Closing a child tab to its parent and
+ * Back at the start of a tab's history. Closing a child tab to its parent and
  * a tab from another app back to that app is Fenix's own (its last-tab feature runs first); with a
  * Sidebar, any other tab leaves Sideraven instead of showing the home screen.
  */

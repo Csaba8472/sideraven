@@ -19,9 +19,9 @@ import pt.dweep.sideraven.SidebarTier
 import pt.dweep.sideraven.sync.ZenSyncPreferences
 
 /**
- * Sideraven Settings (CONTEXT.md): everything Sideraven adds, apart from Fenix's own settings.
+ * Sideraven Settings: everything Sideraven adds, apart from Fenix's own settings.
  * Reached from the Sideraven entry near the top of Settings. Opened plain it lists the categories;
- * opened with a [SideravenSettings.ARG_CATEGORY] it shows that category's screen (spec 0008).
+ * opened with a [SideravenSettings.ARG_CATEGORY] it shows that category's screen.
  */
 class SideravenSettingsFragment : PreferenceFragmentCompat(), SystemInsetsPaddedFragment {
     // Backup's file pickers; registered with the fragment, used from the Backup screen.

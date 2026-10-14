@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 
 /**
- * Fenix's toolbar beside a Sidebar (spec 0008): it takes the Sidebar's surface colour, so the
+ * Fenix's toolbar beside a Sidebar: it takes the Sidebar's surface colour, so the
  * toolbar is part of the frame and only the page is the rounded card. Fenix's toolbars call this
  * from one `SIDERAVEN-HOOK` each, where they build their colour scheme.
  */

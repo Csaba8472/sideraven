@@ -27,7 +27,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0008 ticket 14 (audit 12): drag targets tick only when they would take the drop. */
+/** Drag targets tick only when they would take the drop. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class DragHapticsTest {

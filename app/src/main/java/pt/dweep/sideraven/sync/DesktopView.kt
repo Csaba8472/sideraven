@@ -19,7 +19,7 @@ data class DesktopSpace(
     val icon: String,
 )
 
-/** One of desktop's open tabs (Desktop Tabs, CONTEXT.md). */
+/** One of desktop's open tabs (a Desktop Tab). */
 data class DesktopTab(
     val url: String,
     val title: String,

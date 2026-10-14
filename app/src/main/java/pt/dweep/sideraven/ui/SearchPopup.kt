@@ -88,7 +88,7 @@ import mozilla.components.ui.icons.R as iconsR
 
 /**
  * What the Search Pop-up is for: navigating the current tab, or opening a new tab once something
- * is chosen (CONTEXT.md, "Search Pop-up").
+ * is chosen.
  *
  * @property initialText The field's starting text (the current URL, selected; empty for a new tab).
  */

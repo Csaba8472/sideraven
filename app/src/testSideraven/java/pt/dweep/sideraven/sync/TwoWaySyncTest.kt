@@ -18,7 +18,7 @@ import pt.dweep.sideraven.InMemoryEssentialsRepository
 import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.Spaces
 
-/** Zen Sync ticket 05: two-way sync against the fake server, after a Keep-separate First Sync. */
+/** Two-way sync against the fake server, after a Keep-separate First Sync. */
 @RunWith(AndroidJUnit4::class)
 class TwoWaySyncTest {
     private val server = FakeSyncServer()

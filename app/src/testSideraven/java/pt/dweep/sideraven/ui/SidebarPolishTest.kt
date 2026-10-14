@@ -71,7 +71,7 @@ class SidebarPolishTest {
         }
 
         composeRule.onNodeWithTag(SidebarTestTag.SEARCH_SCRIM).performTouchInput { click(Offset(4f, 4f)) }
-        // The pop-up fades out first (spec 0008).
+        // The pop-up fades out first.
         composeRule.waitForIdle()
 
         assertEquals(1, dismissed)

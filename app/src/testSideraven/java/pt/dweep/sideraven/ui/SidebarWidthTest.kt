@@ -22,7 +22,7 @@ import pt.dweep.sideraven.SidebarWidth
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 11: the Sidebar's width, compact, standard or wide. */
+/** The Sidebar's width, compact, standard or wide. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SidebarWidthTest {
@@ -53,13 +53,12 @@ class SidebarWidthTest {
     }
 
     @Test
-    fun `THEN the width is a radio list writing the store`() {
+    fun `THEN the width is a segmented choice writing the store`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val screen = PreferenceManager(context).createPreferenceScreen(context)
         val store = InMemorySidebarModeStore()
 
-        val radios = SidebarPreferences.bindWidth(context, screen, store, context.getSharedPreferences("radio-test", 0))
-        radios.first { it.key.endsWith(".Wide") }.callChangeListener(true)
+        SidebarPreferences.bindWidth(context, screen, store).choose(SidebarWidth.Wide)
 
         assertEquals(SidebarWidth.Wide, store.sidebarWidth.value)
     }

@@ -14,7 +14,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spaces ticket 12: renaming Essentials and Pinned Tabs. */
+/** Renaming Essentials and Pinned Tabs. */
 @RunWith(AndroidJUnit4::class)
 class RenamePinsTest {
     private val essentialsRepository = InMemoryEssentialsRepository()

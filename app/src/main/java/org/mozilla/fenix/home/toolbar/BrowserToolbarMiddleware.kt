@@ -557,7 +557,7 @@ class BrowserToolbarMiddleware(
         source: Source = Source.Unknown,
     ): Action =
         when (action) {
-            // SIDERAVEN-HOOK: beside a Sidebar the slot is the Sidebar Button (spec 0008)
+            // SIDERAVEN-HOOK: beside a Sidebar the slot is the Sidebar Button
             HomeToolbarAction.TabCounter if pt.dweep.sideraven.SidebarGate.showsSidebar(uiContext) ->
                 mozilla.components.compose.browser.toolbar.concept.Action.ActionButtonRes(
                     drawableResId = R.drawable.sideraven_ic_sidebar_24,

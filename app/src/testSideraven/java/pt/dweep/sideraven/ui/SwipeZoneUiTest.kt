@@ -21,7 +21,7 @@ import pt.dweep.sideraven.SidebarMode
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 08, seam 2: swiping in from the Swipe Zone reveals the Sidebar. */
+/** Swiping in from the Swipe Zone reveals the Sidebar. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SwipeZoneUiTest {

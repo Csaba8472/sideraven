@@ -31,7 +31,7 @@ import pt.dweep.sideraven.TabRows
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 06: tab row density and the close button setting. */
+/** Tab row density and the close button setting. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class TabRowsCloseButtonTest {
@@ -96,10 +96,11 @@ class TabRowsCloseButtonTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val screen = PreferenceManager(context).createPreferenceScreen(context)
         val store = InMemorySidebarModeStore()
-        val checked = context.getSharedPreferences("radio-test", 0)
 
-        SidebarPreferences.bindTabRows(context, screen, store, checked).first { it.key.endsWith(".Compact") }.callChangeListener(true)
-        SidebarPreferences.bindCloseButtons(context, screen, store, checked).first { it.key.endsWith(".EveryTab") }.callChangeListener(true)
+        SidebarPreferences.bindTabRows(context, screen, store).choose(TabRows.Compact)
+        val every = SidebarPreferences.bindCloseButtons(context, screen, store)
+        assertEquals("Only on the selected tab", every.summaryOff.toString())
+        every.onPreferenceChangeListener!!.onPreferenceChange(every, true)
 
         assertEquals(TabRows.Compact, store.tabRows.value)
         assertEquals(CloseButtons.EveryTab, store.closeButtons.value)

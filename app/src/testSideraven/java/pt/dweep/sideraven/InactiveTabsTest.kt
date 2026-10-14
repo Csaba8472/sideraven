@@ -13,7 +13,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Ticket 14: the Inactive Tabs Section, against a real store. */
+/** The Inactive Tabs Section, against a real store. */
 class InactiveTabsTest {
     private val now = 100_000_000L
     private val maxActive = 10_000L

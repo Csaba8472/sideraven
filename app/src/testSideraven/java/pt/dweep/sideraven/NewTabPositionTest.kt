@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import pt.dweep.sideraven.settings.SidebarPreferences
 
-/** Spec 0006 ticket 12: new tabs appear at the top or the bottom of the Tab List. */
+/** New tabs appear at the top or the bottom of the Tab List. */
 @RunWith(AndroidJUnit4::class)
 class NewTabPositionTest {
     private fun tabListAfterOpening(position: NewTabPosition): List<String> {
@@ -34,14 +34,12 @@ class NewTabPositionTest {
     }
 
     @Test
-    fun `THEN the position is a radio list writing the store`() {
+    fun `THEN the position is a segmented choice writing the store`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val screen = PreferenceManager(context).createPreferenceScreen(context)
         val store = InMemorySidebarModeStore()
 
-        SidebarPreferences.bindNewTabPosition(context, screen, store, context.getSharedPreferences("radio-test", 0))
-            .first { it.key.endsWith(".Bottom") }
-            .callChangeListener(true)
+        SidebarPreferences.bindNewTabPosition(context, screen, store).choose(NewTabPosition.Bottom)
 
         assertEquals(NewTabPosition.Bottom, store.newTabPosition.value)
     }

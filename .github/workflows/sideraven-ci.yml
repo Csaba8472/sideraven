@@ -19,7 +19,7 @@ jobs:
   build:
     timeout-minutes: 240
     name: Build debug APK and run Sideraven unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7

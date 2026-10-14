@@ -14,56 +14,53 @@ import org.junit.runner.RunWith
 import pt.dweep.sideraven.AddressBarLayout
 import pt.dweep.sideraven.InMemorySidebarModeStore
 import pt.dweep.sideraven.SidebarMode
+import pt.dweep.sideraven.SidebarSide
 import pt.dweep.sideraven.SidebarTier
 
-/** Ticket 07, and device-test feedback: Sideraven's choices are Fenix's inline radio lists. */
+/** Sideraven's choices: picture pickers for the big ones, segmented buttons and value rows for the rest. */
 @RunWith(AndroidJUnit4::class)
 class SidebarPreferencesTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val group = PreferenceManager(context).createPreferenceScreen(context)
-    private val checked = context.getSharedPreferences("radio-test", Context.MODE_PRIVATE)
-
-    private fun modes(
-        tier: SidebarTier,
-        store: InMemorySidebarModeStore,
-    ) = SidebarPreferences.bindMode(context, group, tier, store, checked)
-
-    private fun offered(tier: SidebarTier, store: InMemorySidebarModeStore) =
-        modes(tier, store).filter { it.isVisible }.map { it.key.substringAfterLast('.') }
-
-    private fun checkedOne(prefix: String) = checked.all.filter { (key, value) -> key.startsWith(prefix) && value == true }.keys.map { it.substringAfterLast('.') }
 
     @Test
-    fun `GIVEN a tablet THEN all three modes are listed and the current one is checked`() {
-        assertEquals(listOf("Persistent", "Collapsed", "AutoHide"), offered(SidebarTier.Tablet, InMemorySidebarModeStore()))
-        assertEquals(listOf("Persistent"), checkedOne(SidebarPreferences.MODE_KEY))
+    fun `GIVEN a tablet THEN all three modes are offered and the current one is chosen`() {
+        val picker = SidebarPreferences.bindMode(context, group, SidebarTier.Tablet, InMemorySidebarModeStore())
+        assertEquals(listOf(SidebarMode.Persistent, SidebarMode.Collapsed, SidebarMode.AutoHide), picker.offered)
+        assertEquals(SidebarMode.Persistent, picker.selected)
     }
 
     @Test
-    fun `GIVEN a large phone THEN Persistent is not listed and a Persistent choice shows as Collapsed`() {
-        assertEquals(listOf("Collapsed", "AutoHide"), offered(SidebarTier.LargePhone, InMemorySidebarModeStore(SidebarMode.Persistent)))
-        assertEquals(listOf("Collapsed"), checkedOne(SidebarPreferences.MODE_KEY))
+    fun `GIVEN a large phone THEN Persistent is not offered and a Persistent choice shows as Collapsed`() {
+        val picker = SidebarPreferences.bindMode(context, group, SidebarTier.LargePhone, InMemorySidebarModeStore(SidebarMode.Persistent))
+        assertEquals(listOf(SidebarMode.Collapsed, SidebarMode.AutoHide), picker.offered)
+        assertEquals(SidebarMode.Collapsed, picker.selected)
     }
 
     @Test
     fun `WHEN a mode is picked THEN it becomes the stored choice, as with the Toggle`() {
         val store = InMemorySidebarModeStore()
-        val radios = modes(SidebarTier.Tablet, store)
-
-        radios.first { it.key.endsWith(".AutoHide") }.callChangeListener(true)
-        // Fenix's radio group reports the others being unchecked; that changes nothing.
-        radios.first { it.key.endsWith(".Persistent") }.callChangeListener(false)
-
+        SidebarPreferences.bindMode(context, group, SidebarTier.Tablet, store).choose(SidebarMode.AutoHide)
         assertEquals(SidebarMode.AutoHide, store.chosenMode.value)
     }
 
     @Test
     fun `WHEN the address bar is moved to the Sidebar THEN the layout store follows`() {
         val store = InMemorySidebarModeStore()
-        val radios = SidebarPreferences.bindLayout(context, group, store, checked)
-
-        radios.first { it.key.endsWith(".Sidebar") }.callChangeListener(true)
-
+        SidebarPreferences.bindLayout(context, group, store).choose(AddressBarLayout.Sidebar)
         assertEquals(AddressBarLayout.Sidebar, store.addressBarLayout.value)
+    }
+
+    @Test
+    fun `WHEN the screen is shown again THEN each row shows the stored value without writing it`() {
+        val store = InMemorySidebarModeStore()
+        val side = SidebarPreferences.bindSide(context, group, store)
+        store.sidebarSide.set(SidebarSide.Right)
+
+        // Filled again (onResume): the same row, now showing what's stored.
+        val again = SidebarPreferences.bindSide(context, group, store)
+        assertEquals(side, again)
+        assertEquals(SidebarSide.Right, again.selected)
+        assertEquals(1, group.preferenceCount)
     }
 }

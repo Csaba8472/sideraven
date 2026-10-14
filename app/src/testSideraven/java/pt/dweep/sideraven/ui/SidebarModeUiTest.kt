@@ -22,7 +22,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 05, seam 2: Collapsed layout and the Toggle. */
+/** Collapsed layout and the Toggle. */
 @RunWith(AndroidJUnit4::class)
 class SidebarModeUiTest {
     @get:Rule

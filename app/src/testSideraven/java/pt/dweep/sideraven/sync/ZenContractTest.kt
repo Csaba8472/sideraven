@@ -18,7 +18,7 @@ import java.net.URL
 import java.util.Base64
 
 /**
- * Zen Sync ticket 01: the protocol port against Z-Sync's contract fixtures (vendored under
+ * The protocol port against Z-Sync's contract fixtures (vendored under
  * `zen-contract/`, Contract-Version 1). Expected values come from the fixtures, not the code.
  */
 @RunWith(AndroidJUnit4::class)

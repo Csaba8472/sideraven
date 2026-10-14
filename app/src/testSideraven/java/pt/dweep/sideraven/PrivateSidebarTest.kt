@@ -13,7 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Ticket 13: the Sidebar in Private Mode, and the guarantee that nothing private is persisted. */
+/** The Sidebar in Private Mode, and the guarantee that nothing private is persisted. */
 class PrivateSidebarTest {
     private val store =
         BrowserStore().apply {

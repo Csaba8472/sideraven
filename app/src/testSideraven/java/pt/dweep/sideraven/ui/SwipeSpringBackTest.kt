@@ -24,7 +24,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Polish round 2 ticket 03: a swipe let go short of acting always springs back to rest. */
+/** A swipe let go short of acting always springs back to rest. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SwipeSpringBackTest {

@@ -27,7 +27,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 09, seam 2: long-press/right-click open the Tab Context Menu. */
+/** Long-press/right-click open the Tab Context Menu. */
 @RunWith(AndroidJUnit4::class)
 class TabContextMenuUiTest {
     @get:Rule

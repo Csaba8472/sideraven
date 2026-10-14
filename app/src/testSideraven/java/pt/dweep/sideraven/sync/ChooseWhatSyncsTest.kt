@@ -19,7 +19,7 @@ import pt.dweep.sideraven.InMemoryEssentialsRepository
 import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.Spaces
 
-/** Zen Sync ticket 07: each category, and colour sharing, in both directions. */
+/** Each category, and colour sharing, in both directions. */
 @RunWith(AndroidJUnit4::class)
 class ChooseWhatSyncsTest {
     private val server = FakeSyncServer()

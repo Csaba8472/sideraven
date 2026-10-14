@@ -12,7 +12,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spaces ticket 05: moving tabs between Spaces, and selection following a tab's Space. */
+/** Moving tabs between Spaces, and selection following a tab's Space. */
 @RunWith(AndroidJUnit4::class)
 class MoveTabsBetweenSpacesTest {
     private val spaces = Spaces(InMemorySpacesRepository())

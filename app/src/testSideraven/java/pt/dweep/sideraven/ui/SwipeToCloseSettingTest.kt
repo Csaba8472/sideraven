@@ -27,7 +27,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 07: turning Swipe to close off. */
+/** Turning Swipe to close off. */
 @RunWith(AndroidJUnit4::class)
 class SwipeToCloseSettingTest {
     @get:Rule

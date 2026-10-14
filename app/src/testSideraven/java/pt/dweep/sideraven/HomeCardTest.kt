@@ -21,7 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spec 0006 ticket 14: Fenix's home screen as a card inside the frame. */
+/** Fenix's home screen as a card inside the frame. */
 @RunWith(AndroidJUnit4::class)
 class HomeCardTest {
     @get:Rule

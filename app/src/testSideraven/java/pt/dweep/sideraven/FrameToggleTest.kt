@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import pt.dweep.sideraven.settings.SidebarPreferences
 
-/** Spec 0007 ticket 11: the Rounded frame setting. */
+/** The Rounded frame setting. */
 @RunWith(AndroidJUnit4::class)
 class FrameToggleTest {
     private fun state(

@@ -14,7 +14,7 @@ import org.json.JSONObject
 import java.util.UUID
 
 /**
- * The Essentials Cap (CONTEXT.md): at or above it, adding an Essential on this device is
+ * The Essentials Cap: at or above it, adding an Essential on this device is
  * unavailable. Essentials beyond it (arriving through Zen Sync) are never hidden.
  */
 const val ESSENTIALS_CAP = 12
@@ -23,7 +23,7 @@ const val ESSENTIALS_CAP = 12
 fun newPinId(): String = UUID.randomUUID().toString()
 
 /**
- * A URL pinned to the Essentials Section. Stored by URL, not tab id (ADR 0001), in display order.
+ * A URL pinned to the Essentials Section. Stored by URL, not tab id, in display order.
  *
  * @property id Stable identity, kept across restarts (and, with Zen Sync, across devices).
  * @property customName The user's name for it, shown instead of [title] when set.
@@ -100,7 +100,7 @@ enum class PinResult {
     /** Already an Essential. */
     AlreadyPinned,
 
-    /** Private tabs never become Essentials (ADR 0005). */
+    /** Private tabs never become Essentials. */
     PrivateRefused,
 }
 
@@ -153,7 +153,7 @@ class PreferencesEssentialsRepository private constructor(context: Context) : Es
 }
 
 /**
- * Essentials operations and Essential Tab links (CONTEXT.md, "Essential Tab").
+ * Essentials operations and Essential Tab links.
  *
  * A link (Essential URL -> tab id) is made when a tab is opened from, or pinned as, an Essential
  * and survives navigation. Links live in memory; after a restart, [relinkRestoredTabs] re-links

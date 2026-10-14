@@ -15,7 +15,7 @@ import pt.dweep.sideraven.sync.PreferencesSyncBaseRepository
 import pt.dweep.sideraven.sync.PreferencesZenSyncSettingsStore
 
 /**
- * Sideraven's part of app startup (spec 0009). Its stores read their files from disk once; doing
+ * Sideraven's part of app startup. Its stores read their files from disk once; doing
  * that on a background thread as the process starts, alongside Gecko's own start-up, means the
  * Sidebar's first frame finds them loaded instead of reading on the main thread. A store asked
  * for while its preload is still running waits for it (each `get` is synchronised), never reading twice.

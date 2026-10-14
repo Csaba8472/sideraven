@@ -23,7 +23,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 14, seam 2: the Inactive Tabs Section. */
+/** The Inactive Tabs Section. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class InactiveTabsUiTest {

@@ -21,9 +21,9 @@ import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
 
 /*
- * Zen Visual Language tokens (CONTEXT.md). Restrained strategy: neutrals plus one accent,
+ * Zen Visual Language tokens. Restrained strategy: neutrals plus one accent,
  * reserved for the Active Tab Indicator, focus, drop targets and primary actions.
- * Values are starting points; DESIGN.md records the final ones (ticket 19).
+ * Values are starting points; DESIGN.md records the final ones.
  */
 
 private val ZenDark: ColorScheme =
@@ -156,13 +156,15 @@ object SideravenMotion {
 
 /**
  * Wraps Sideraven UI in the Zen palette, following the system dark/light setting. Private Mode
- * uses Fenix's private colours instead, so it always reads as private (CONTEXT.md, "Browsing Mode").
+ * uses Fenix's private colours instead, so it always reads as private.
  */
 @Composable
 fun SideravenTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     isPrivate: Boolean = false,
     spaceAccent: String? = null,
+    // Pure black (Sideraven Settings): only in the dark theme, and never for Private, which keeps Fenix's colours.
+    pureBlack: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
@@ -173,7 +175,7 @@ fun SideravenTheme(
                 spaceAccent != null -> zenColorScheme(darkTheme).withSpaceAccent(spaceAccent, darkTheme)
                 darkTheme -> ZenDark
                 else -> ZenLight
-            },
+            }.let { if (pureBlack && darkTheme && !isPrivate) it.pureBlack() else it },
         shapes = ZenShapes,
         content = content,
     )
@@ -181,7 +183,7 @@ fun SideravenTheme(
 
 /**
  * Fenix's theme with the Zen Visual Language applied on top, for upstream screens restyled
- * through theming only (the Tab Tray, ticket 18). Private keeps Fenix's private colours.
+ * through theming only (the Tab Tray). Private keeps Fenix's private colours.
  */
 @Composable
 fun ZenFirefoxTheme(

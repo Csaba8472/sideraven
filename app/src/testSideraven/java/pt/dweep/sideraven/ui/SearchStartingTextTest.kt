@@ -7,7 +7,7 @@ package pt.dweep.sideraven.ui
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Spec 0006 ticket 02: the Search Pop-up starts with the search words on a results page. */
+/** The Search Pop-up starts with the search words on a results page. */
 class SearchStartingTextTest {
     @Test
     fun `THEN a results page starts with its search words, any other page with its URL, and Fenix's own pages empty`() {

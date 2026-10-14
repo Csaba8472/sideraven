@@ -4,6 +4,8 @@
 
 package pt.dweep.sideraven.ui
 
+import pt.dweep.sideraven.theme.SidebarFill
+import pt.dweep.sideraven.theme.sidebarFill
 import pt.dweep.sideraven.UnloadOthersFrom
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -114,6 +117,8 @@ fun EssentialsSection(
     asGrid: Boolean,
     collapsedMaxHeight: Dp,
     onIntent: (SidebarIntent) -> Unit,
+    // Collapsed Mode's scroll, so Section Sizing can see how much the column holds.
+    collapsedScroll: ScrollState = rememberScrollState(),
     dropTarget: DropTarget = DropTarget.None,
     newUrls: Set<String> = emptySet(),
     // Whether there's a Space to pin an Essential to (TalkBack's "Pin to this space").
@@ -217,7 +222,7 @@ fun EssentialsSection(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(max = collapsedMaxHeight)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(collapsedScroll)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
                     .then(sectionModifier)
                     .semantics { contentDescription = label }
@@ -351,7 +356,7 @@ private fun EssentialTile(
                 }
                 .height(height)
                 .clip(shape)
-                .background(if (essential.isSelected) colors.surfaceContainerHigh else colors.surfaceContainer)
+                .background(sidebarFill(if (essential.isSelected) SidebarFill.High else SidebarFill.Container))
                 .then(
                     when {
                         essential.isSelected -> Modifier.border(1.5.dp, colors.primary, shape)

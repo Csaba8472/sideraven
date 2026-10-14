@@ -17,7 +17,7 @@ import pt.dweep.sideraven.theme.SideravenTheme
 import pt.dweep.sideraven.ui.SidebarContent
 import pt.dweep.sideraven.ui.SidebarTestTag
 
-/** Address Bar Layout ticket 04: Fenix's menu and site panel from the Sidebar Address Bar. */
+/** Fenix's menu and site panel from the Sidebar Address Bar. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SidebarPageActionsTest {

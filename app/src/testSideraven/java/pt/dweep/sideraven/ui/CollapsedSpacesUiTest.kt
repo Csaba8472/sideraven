@@ -22,7 +22,7 @@ import pt.dweep.sideraven.SidebarSpace
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 06: Collapsed Mode shows one Space button that opens a menu of Spaces. */
+/** Collapsed Mode shows one Space button that opens a menu of Spaces. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class CollapsedSpacesUiTest {

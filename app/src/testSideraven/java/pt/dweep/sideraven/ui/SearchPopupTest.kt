@@ -30,7 +30,7 @@ import pt.dweep.sideraven.SidebarMode
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Sidebar Address Bar ticket 03: the Search Pop-up, with fake suggestion sources. */
+/** The Search Pop-up, with fake suggestion sources. */
 @OptIn(ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
@@ -102,7 +102,7 @@ class SearchPopupTest {
         show()
 
         composeRule.onNodeWithTag(SidebarTestTag.SEARCH_FIELD).performKeyInput { pressKey(Key.Escape) }
-        // The pop-up fades out first (spec 0008).
+        // The pop-up fades out first.
         composeRule.waitForIdle()
 
         assertEquals(1, dismissed)

@@ -18,7 +18,7 @@ data class MergePlan(
 )
 
 /**
- * Record-level three-way merge against the last-synced [SyncBase] (spec 0003): a record changed
+ * Record-level three-way merge against the last-synced [SyncBase]: a record changed
  * on one side takes that side; changed on both, the later edit wins. A record is deleted on the
  * server only if it existed at the last sync and the tablet no longer has it, never just because
  * it's missing here; a local delete loses to a remote edit, a remote delete to a local edit.

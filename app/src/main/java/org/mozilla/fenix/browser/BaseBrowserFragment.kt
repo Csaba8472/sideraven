@@ -1365,7 +1365,7 @@ abstract class BaseBrowserFragment :
             owner = this,
             view = view,
         )
-        // SIDERAVEN-HOOK: the Sidebar layout hides Fenix's toolbar (CONTEXT.md, "Address Bar Layout")
+        // SIDERAVEN-HOOK: the Sidebar layout hides Fenix's toolbar
         pt.dweep.sideraven.SidebarToolbar.observe(
             fragment = this,
             isFullScreen = { fullScreenFeature.get()?.isFullScreen == true },
@@ -2067,7 +2067,7 @@ abstract class BaseBrowserFragment :
             promptsFeature.onBackPressed() ||
             sessionFeature.onBackPressed() ||
             lastTabFeature.onBackPressed() ||
-            // SIDERAVEN-HOOK: with a Sidebar, back at the start of a tab leaves the app (spec 0008)
+            // SIDERAVEN-HOOK: with a Sidebar, back at the start of a tab leaves the app
             (customTabSessionId == null && pt.dweep.sideraven.BackAtRoot.onUnhandledBack(requireActivity()))
             // SIDERAVEN-HOOK-END
     }
@@ -2267,6 +2267,8 @@ abstract class BaseBrowserFragment :
             activity.exitImmersiveMode(
                 unregisterOnApplyWindowInsetsListener = binding.engineView::removeWindowInsetsListener
             )
+            // SIDERAVEN-HOOK: Sideraven's Full screen setting hides the bars again
+            pt.dweep.sideraven.SidebarFullScreen.reapply(activity)
 
             (view as? SwipeGestureLayout)?.isSwipeEnabled = true
             (activity as? HomeActivity)?.let { homeActivity ->
@@ -2314,7 +2316,7 @@ abstract class BaseBrowserFragment :
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     internal fun collapseBrowserView() {
         // SIDERAVEN-HOOK: stays hidden in the Sidebar layout
-        if (webAppToolbarShouldBeVisible && !pt.dweep.sideraven.SidebarToolbar.isHidden()) {
+        if (webAppToolbarShouldBeVisible && !pt.dweep.sideraven.SidebarToolbar.isHidden(activity)) {
             browserToolbar.visible()
             browserNavigationBar?.visible()
             _bottomToolbarContainerView?.toolbarContainerView?.isVisible = true
@@ -2344,7 +2346,7 @@ abstract class BaseBrowserFragment :
     internal fun reinitializeEngineView() {
         val isFullscreen = fullScreenFeature.get()?.isFullScreen == true
         // SIDERAVEN-HOOK: no toolbar space in the Sidebar layout
-        val shouldToolbarsBeHidden = isFullscreen || !webAppToolbarShouldBeVisible || pt.dweep.sideraven.SidebarToolbar.isHidden()
+        val shouldToolbarsBeHidden = isFullscreen || !webAppToolbarShouldBeVisible || pt.dweep.sideraven.SidebarToolbar.isHidden(activity)
         val topToolbarHeight = getTopToolbarHeight(includeTabStripIfAvailable = customTabSessionId == null)
         val bottomToolbarHeight = getBottomToolbarHeight(includeNavBarIfEnabled = customTabSessionId == null)
 

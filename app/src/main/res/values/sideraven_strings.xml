@@ -4,8 +4,63 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <!-- Sideraven's own strings. Kept out of upstream strings.xml to avoid rebase conflicts. -->
 <resources>
+    <!-- Arrange Mode (Collapsed Mode): the Main Menu entry that starts it, its two buttons, and its grab bars for TalkBack. -->
+    <string name="sideraven_arrange_sidebar">Arrange sidebar</string>
+    <string name="sideraven_arrange_done">Done</string>
+    <string name="sideraven_arrange_reset">Reset to automatic sizes</string>
+    <string name="sideraven_resize_essentials">Resize Essentials</string>
+    <string name="sideraven_resize_pinned">Resize pinned tabs</string>
+    <string name="sideraven_section_show_more">Show more</string>
+    <string name="sideraven_section_show_less">Show less</string>
+    <!-- Synced Tabs, in the Sidebar or the Main Menu: opens the tabs open on the user's other devices. -->
+    <string name="sideraven_synced_tabs">Synced tabs</string>
     <!-- Sidebar Controls: opens a new tab in the current Browsing Mode. -->
     <string name="sideraven_new_tab">New tab</string>
+    <!-- TalkBack actions on the Sidebar Address Bar, for its sideways swipes. -->
+    <string name="sideraven_next_tab">Next tab</string>
+    <string name="sideraven_previous_tab">Previous tab</string>
+    <!-- Settings: swipes on the Sidebar Address Bar. -->
+    <string name="sideraven_group_gestures">Gestures</string>
+    <!-- Sideraven Settings, 1.1: picture pickers, segmented buttons and switches. -->
+    <string name="sideraven_mode_persistent_caption">Always open, with titles</string>
+    <string name="sideraven_mode_collapsed_caption">Icons only</string>
+    <string name="sideraven_mode_autohide_caption">Opens when you need it</string>
+    <string name="sideraven_group_place">Position and size</string>
+    <string name="sideraven_settings_side">Sidebar side</string>
+    <string name="sideraven_button_synced_tabs">Synced tabs</string>
+    <string name="sideraven_button_change_mode">Change mode</string>
+    <string name="sideraven_button_move_address">Move address bar</string>
+    <string name="sideraven_button_in_menu">In the ⋮ menu</string>
+    <string name="sideraven_group_tab_list">Tab list</string>
+    <!-- Tab List Direction: the Tab List grows down from the top, or up from the bottom by the address bar. -->
+    <string name="sideraven_settings_tab_list_direction">Tabs start from</string>
+    <string name="sideraven_tab_list_top_down">Top</string>
+    <string name="sideraven_tab_list_bottom_up">Bottom</string>
+    <string name="sideraven_tab_list_bottom_up_summary">Newest tabs by the address bar, within thumb reach</string>
+    <string name="sideraven_settings_new_tab_position">New tabs appear</string>
+    <string name="sideraven_settings_close_every">Close button on every tab</string>
+    <string name="sideraven_settings_close_every_off">Only on the selected tab</string>
+    <string name="sideraven_layout_top_caption">Address bar at the top of the page</string>
+    <string name="sideraven_layout_sidebar_caption">Address bar at the bottom of the sidebar</string>
+    <string name="sideraven_animations_full_summary">Everything moves</string>
+    <string name="sideraven_animations_reduced_summary">Fades only, nothing moves</string>
+    <string name="sideraven_animations_off_summary">Nothing animates</string>
+    <!-- Settings, Look and feel: the Sidebar's colours. -->
+    <string name="sideraven_group_theme">Theme</string>
+    <!-- Settings, Look and feel: Full screen hides Android's system bars. -->
+    <string name="sideraven_group_screen">Full screen</string>
+    <string name="sideraven_settings_full_screen">Hide system bars</string>
+    <string name="sideraven_full_screen_off">Off</string>
+    <string name="sideraven_full_screen_status">Status bar</string>
+    <string name="sideraven_full_screen_both">Both</string>
+    <string name="sideraven_full_screen_status_summary">Swipe down from the top to see the status bar for a moment</string>
+    <string name="sideraven_full_screen_both_summary">Swipe in from the top or bottom edge to see the bars for a moment</string>
+    <string name="sideraven_settings_space_themes">Space themes</string>
+    <string name="sideraven_settings_space_themes_summary">Tint the sidebar with each space’s colours, as Zen does</string>
+    <string name="sideraven_settings_pure_black">Pure black</string>
+    <string name="sideraven_settings_pure_black_summary">A black dark theme for OLED screens. Space colours stay as accents.</string>
+    <string name="sideraven_settings_address_swipe_new_tab">Swipe up for a new tab</string>
+    <string name="sideraven_settings_address_swipe_tabs">Swipe sideways to switch tabs</string>
     <!-- Browsing Mode Switch in Sidebar Controls. -->
     <string name="sideraven_switch_to_private">Private browsing</string>
     <string name="sideraven_switch_to_normal">Leave private browsing</string>
@@ -30,7 +85,7 @@
     <string name="sideraven_inactive_show">Show %d inactive tabs</string>
     <!-- Settings: show or hide the Inactive Tabs Section in the Sidebar. -->
     <string name="sideraven_settings_inactive">Show inactive tabs</string>
-    <string name="sideraven_settings_inactive_summary">Tabs you haven’t used in a while, at the bottom of the list</string>
+    <string name="sideraven_settings_inactive_summary">Tabs you haven’t used in a while, at the end of the list</string>
     <string name="sideraven_mute_tab">Mute tab</string>
     <string name="sideraven_unmute_tab">Unmute tab</string>
     <string name="sideraven_playing_audio">Playing audio</string>
@@ -48,39 +103,33 @@
     <string name="sideraven_essential_not_open">Not open</string>
     <!-- Accessibility label for the Essentials Section. -->
     <string name="sideraven_essentials">Essentials</string>
-    <!-- Collapsed Mode: TalkBack names for the Dividers under Essentials and pinned tabs, which can be dragged. -->
-    <string name="sideraven_resize_essentials">Resize Essentials</string>
-    <string name="sideraven_resize_pinned">Resize pinned tabs</string>
-    <!-- TalkBack actions on those Dividers. -->
-    <string name="sideraven_section_show_more">Show more</string>
-    <string name="sideraven_section_show_less">Show less</string>
     <!-- Empty Essentials drop zone shown while a tab is dragged. -->
     <string name="sideraven_essentials_drop_here">Drop here to pin</string>
     <!-- Toggle: switches the Sidebar to Persistent Mode (full width, with titles). -->
     <string name="sideraven_expand_sidebar">Expand sidebar</string>
     <!-- Toggle: switches the Sidebar to Collapsed Mode (narrow strip of favicons). -->
     <string name="sideraven_collapse_sidebar">Collapse sidebar</string>
-    <!-- Toggle: switches the Sidebar to Auto-Hide Mode (hidden until revealed). -->
-    <string name="sideraven_autohide_sidebar">Auto-hide sidebar</string>
+    <!-- Toggle: switches the Sidebar to Auto-Hide Mode (hidden until revealed), "Compact mode" as Zen calls it. -->
+    <string name="sideraven_autohide_sidebar">Compact mode</string>
     <!-- Accessibility label for the Scrim behind a revealed Sidebar; tapping it closes the Sidebar. -->
     <string name="sideraven_close_sidebar">Close sidebar</string>
     <!-- The title at the top of the Sidebar in private browsing. -->
     <string name="sideraven_private_title">Private browsing</string>
     <!-- Sidebar Flap: the edge handle that opens the Auto-Hide Sidebar. -->
     <string name="sideraven_open_sidebar">Open sidebar</string>
-    <string name="sideraven_settings_flap">Show sidebar handle</string>
-    <string name="sideraven_settings_flap_summary">Tap or pull it to open the sidebar. Hold it to move it.</string>
+    <string name="sideraven_settings_flap">Handle</string>
+    <string name="sideraven_settings_flap_summary">A tab on the screen edge. Tap or pull it to open the sidebar, or hold it to move it.</string>
     <!-- Settings: title of the Sidebar section in Customize. -->
     <string name="sideraven_settings_sidebar">Sidebar</string>
     <!-- Settings: picks the Sidebar Mode. -->
     <string name="sideraven_settings_sidebar_mode">Sidebar mode</string>
-    <!-- Sidebar Mode names. -->
-    <string name="sideraven_mode_persistent">Persistent</string>
+    <!-- Sidebar Mode names, as Zen desktop names them: Persistent Mode is Expanded, Auto-Hide Mode is Compact. -->
+    <string name="sideraven_mode_persistent">Expanded</string>
     <string name="sideraven_mode_collapsed">Collapsed</string>
-    <string name="sideraven_mode_autohide">Auto-hide</string>
+    <string name="sideraven_mode_autohide">Compact</string>
     <!-- Settings: Swipe Zone switch. -->
-    <string name="sideraven_settings_swipe_zone">Swipe in from the edge</string>
-    <string name="sideraven_settings_swipe_zone_summary">Takes over the back gesture in the middle of the edge</string>
+    <string name="sideraven_settings_swipe_zone">Edge swipe</string>
+    <string name="sideraven_settings_swipe_zone_summary">Swipe in from the edge to open the sidebar. The middle of that edge no longer goes back.</string>
     <!-- Spaces: the Space every existing tab joins on first run. -->
     <string name="sideraven_space_home">Home</string>
     <!-- Spaces: the + button in the Space icon row, and the title of the New Space dialog. -->
@@ -220,16 +269,15 @@
     <!-- Settings > Sync: the link to Zen Sync, which lives in Sideraven Settings. -->
     <string name="sideraven_zen_sync_link_summary">Set up in Sideraven settings</string>
     <!-- Address Bar Layout: the setting, its choices, and the layout button in the Sidebar. -->
-    <string name="sideraven_settings_layout">Address bar</string>
-    <string name="sideraven_layout_top">In the toolbar</string>
-    <string name="sideraven_layout_sidebar">In the sidebar</string>
+    <string name="sideraven_settings_layout">Layout</string>
+    <string name="sideraven_layout_top">Sidebar and toolbar</string>
+    <string name="sideraven_layout_sidebar">Only sidebar</string>
     <string name="sideraven_layout_to_top">Move address bar to the toolbar</string>
     <string name="sideraven_layout_to_sidebar">Move address bar to the sidebar</string>
     <!-- The Sidebar Address Bar's menu button and site-info tap target. -->
     <string name="sideraven_address_menu">Menu</string>
     <string name="sideraven_address_site_info">Site information</string>
     <!-- Sideraven Settings: the New tabs section. -->
-    <string name="sideraven_settings_new_tabs">New tab opens</string>
     <!-- Search Pop-up: the clear button, and the chip offering a link from the clipboard. -->
     <string name="sideraven_search_clear">Clear</string>
     <string name="sideraven_search_clipboard">Link you copied</string>
@@ -242,32 +290,29 @@
     <string name="sideraven_settings_popup_outside">Close when you tap outside it</string>
     <!-- Read out for a Sleeping tab, Essential or Pinned Tab (Unloaded; reloads when opened). -->
     <string name="sideraven_asleep">Asleep</string>
-    <!-- Context menus: put every other tab of this kind to sleep (CONTEXT.md, Unload Others). -->
+    <!-- Context menus: put every other tab of this kind to sleep (Unload Others). -->
     <string name="sideraven_unload_others">Unload others</string>
     <!-- Sideraven Settings, Sidebar section: its width in Persistent Mode. -->
     <string name="sideraven_width_compact">Narrow</string>
     <string name="sideraven_width_standard">Standard</string>
     <string name="sideraven_width_wide">Wide</string>
-    <!-- Sideraven Settings: tab row density and close buttons (spec 0007). -->
+    <!-- Sideraven Settings: tab row density and close buttons. -->
     <string name="sideraven_tab_rows_comfortable">Comfortable</string>
     <string name="sideraven_tab_rows_compact">Compact</string>
-    <string name="sideraven_close_selected">Close button on the selected tab</string>
-    <string name="sideraven_close_every">Close button on every tab</string>
     <string name="sideraven_settings_swipe_close">Swipe to close tabs</string>
     <string name="sideraven_settings_look">Look and feel</string>
-    <!-- Sideraven Settings categories (spec 0008): the first screen. -->
-    <string name="sideraven_category_sidebar_summary">Mode, side, width and how to open it</string>
+    <!-- Sideraven Settings categories: the first screen. -->
+    <string name="sideraven_category_sidebar_summary">Mode, side, width and buttons</string>
     <string name="sideraven_category_tabs">Tabs</string>
-    <string name="sideraven_category_tabs_summary">Tab rows, closing tabs and new tabs</string>
-    <string name="sideraven_category_essentials_summary">Essentials per row</string>
+    <string name="sideraven_category_tabs_summary">Tab list, closing tabs and Essentials</string>
     <string name="sideraven_category_address">Address bar &amp; search</string>
-    <string name="sideraven_category_address_summary">Address bar position and search pop-up</string>
-    <string name="sideraven_category_look_summary">Accent colour, animations, frame and haptics</string>
+    <string name="sideraven_category_address_summary">Layout, gestures and search pop-up</string>
+    <string name="sideraven_category_look_summary">Accent colour, theme, animations and haptics</string>
     <string name="sideraven_category_zen_summary">Sync spaces, pinned tabs and Essentials with Zen on desktop</string>
-    <!-- Sideraven Settings: each choice's heading and one-line explanation (spec 0008). -->
+    <!-- Sideraven Settings: each choice's heading and one-line explanation. -->
     <string name="sideraven_group_mode">Mode</string>
-    <string name="sideraven_group_mode_about">Persistent stays open with tab titles. Collapsed shows only icons. Auto-hide stays out of the way until you open it.</string>
-    <string name="sideraven_group_side">Side</string>
+    <!-- Sideraven Settings, Sidebar: where each Optional Control lives, a button in the Sidebar or an entry in the Main Menu (Fenix's three-dots menu). -->
+    <string name="sideraven_group_buttons">Buttons in the sidebar</string>
     <string name="sideraven_group_width">Width</string>
     <string name="sideraven_group_backup">Backup</string>
     <string name="sideraven_category_backup_summary">Export or import your spaces, Essentials and settings</string>
@@ -284,43 +329,38 @@
     <string name="sideraven_backup_imported">Backup restored</string>
     <string name="sideraven_backup_not_a_backup">That file isn\'t a Sideraven backup</string>
     <string name="sideraven_backup_too_new">That backup is from a newer Sideraven. Update Sideraven, then try again.</string>
-    <string name="sideraven_group_phone">Sidebar on phones</string>
-    <string name="sideraven_group_phone_about">On phones the sidebar stays hidden until you open it.</string>
+    <string name="sideraven_group_phone">Phones</string>
     <string name="sideraven_settings_phone_sidebar">Use the sidebar on phones</string>
-    <string name="sideraven_settings_phone_sidebar_summary">Replaces the tab tray</string>
+    <string name="sideraven_settings_phone_sidebar_summary">Replaces the tab tray. It starts hidden behind a handle.</string>
     <string name="sideraven_group_opening">Opening the sidebar</string>
-    <string name="sideraven_group_rows">Tab rows</string>
+    <string name="sideraven_group_rows">Tab height</string>
     <string name="sideraven_group_closing">Closing tabs</string>
-    <string name="sideraven_group_new_tab_position">New tabs go</string>
-    <string name="sideraven_group_inactive">Inactive tabs</string>
     <string name="sideraven_group_per_row">Essentials per row</string>
-    <string name="sideraven_group_per_row_about">Automatic makes the tiles bigger when you have only a few.</string>
     <string name="sideraven_group_accent">Accent colour</string>
     <string name="sideraven_group_accent_about">Spaces with their own colour keep it.</string>
     <string name="sideraven_group_animations">Animations</string>
-    <string name="sideraven_group_animations_about">Reduced keeps fades and drops movement.</string>
-    <string name="sideraven_group_feel">Frame and haptics</string>
+    <string name="sideraven_group_feel">Animations and haptics</string>
     <string name="sideraven_settings_haptics">Haptic feedback</string>
     <string name="sideraven_search_qr">Scan a QR code</string>
     <string name="sideraven_search_voice">Search by voice</string>
     <string name="sideraven_animations_full">Full</string>
-    <string name="sideraven_settings_frame">Rounded frame</string>
-    <string name="sideraven_settings_frame_summary">Round the corners of the page beside the sidebar</string>
+    <string name="sideraven_settings_frame">Rounded corners</string>
+    <string name="sideraven_settings_frame_summary">Round the page’s corners beside the sidebar</string>
     <string name="sideraven_animations_reduced">Reduced</string>
     <string name="sideraven_animations_off">Off</string>
-    <string name="sideraven_settings_haptics_summary">Vibrate lightly when you drag, drop or long-press</string>
+    <string name="sideraven_settings_haptics_summary">A light buzz when you drag, drop or long-press</string>
     <string name="sideraven_essentials_auto">Automatic</string>
     <string name="sideraven_essentials_three">3</string>
     <string name="sideraven_essentials_four">4</string>
     <string name="sideraven_essentials_five">5</string>
     <string name="sideraven_settings_swipe_close_summary">Swipe a tab toward the edge</string>
     <!-- Sideraven Settings, New tabs section: where new tabs appear in the Tab List. -->
-    <string name="sideraven_new_tab_top">At the top</string>
-    <string name="sideraven_new_tab_bottom">At the bottom</string>
+    <string name="sideraven_new_tab_top">Top</string>
+    <string name="sideraven_new_tab_bottom">Bottom</string>
     <!-- Sideraven Settings, Sidebar section: which edge the Sidebar docks on. -->
     <string name="sideraven_side_left">Left</string>
     <string name="sideraven_side_right">Right</string>
-    <!-- Zen Sync: the "Spaces on this tablet" list (spec 0007). -->
+    <!-- Zen Sync: the "Spaces on this tablet" list. -->
     <string name="sideraven_zen_spaces_title">Spaces on this tablet</string>
     <string name="sideraven_zen_space_both">On this tablet and desktop</string>
     <string name="sideraven_zen_space_tablet">Only on this tablet</string>

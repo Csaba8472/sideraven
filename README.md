@@ -36,12 +36,12 @@ Under the hood it's a fork of [Iceraven](https://github.com/fork-maintainers/ice
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/readme/screen-persistent.png" alt="The full Sidebar in Persistent mode: Essentials at the top, pinned tabs and open tabs below, beside a web page"></td>
-    <td width="50%"><img src="docs/readme/screen-autohide.png" alt="The Auto-Hide Sidebar pulled out over a full-screen page, with its handle at the edge"></td>
+    <td width="50%"><img src="docs/readme/screen-persistent.png" alt="The full Sidebar in Expanded mode: Essentials at the top, pinned tabs and open tabs below, beside a web page"></td>
+    <td width="50%"><img src="docs/readme/screen-autohide.png" alt="The Sidebar in Compact mode, pulled out over a full-screen page, with its handle at the edge"></td>
   </tr>
   <tr>
-    <td align="center"><b>Persistent:</b> the whole Sidebar beside the page</td>
-    <td align="center"><b>Auto-Hide:</b> full-screen pages, the Sidebar a swipe away</td>
+    <td align="center"><b>Expanded:</b> the whole Sidebar beside the page</td>
+    <td align="center"><b>Compact:</b> full-screen pages, the Sidebar a swipe away</td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/readme/screen-collapsed.png" alt="The Sidebar in Collapsed mode: a narrow strip of site icons beside a web page"></td>
@@ -116,10 +116,11 @@ Prefer Firefox's own tab tray on your phone? Turn off **Use the sidebar on phone
 <td width="50%" valign="top">
 
 #### The Sidebar
-- **Persistent** keeps the full Sidebar beside the page.
+- **Expanded** keeps the full Sidebar beside the page.
 - **Collapsed** shrinks it to a strip of icons.
-- **Auto-Hide** keeps it out of the way until you pull it from the screen edge or tap its handle. Hold the handle to move it up or down.
-- Put it on the left or the right.
+- **Compact** keeps it out of the way until you pull it from the screen edge or tap its handle. Hold the handle to move it up or down.
+- Put it on the left or the right, and choose which buttons it shows.
+- In Collapsed, drag to size Essentials and Pinned Tabs (**Arrange sidebar** in the ⋮ menu).
 - `Ctrl+Shift+S` switches between the modes.
 
 </td>
@@ -129,6 +130,8 @@ Prefer Firefox's own tab tray on your phone? Turn off **Use the sidebar on phone
 - Swipe a tab toward the screen edge to close it.
 - Drag tabs to reorder them, or onto Essentials to pin them.
 - Unload tabs you aren't using to free memory. They reload when you open them.
+- Start the tab list from the bottom, so your newest tabs sit by your thumb.
+- Your tabs from other devices are a tap away with **Synced tabs**.
 - Private browsing switches instantly and gets its own Sidebar.
 
 </td>
@@ -138,12 +141,15 @@ Prefer Firefox's own tab tray on your phone? Turn off **Use the sidebar on phone
 
 #### Search and the address bar
 - A pop-up search bar with suggestions, search engines, your copied link, QR scanning and voice search.
-- Move the address bar into the Sidebar for a full-screen page, in any mode that can show it.
+- The address bar sits in the Sidebar, so the page gets the whole screen. Prefer Firefox's toolbar? Switch it in any mode that can show it.
+- Swipe the address bar up for a new tab, or sideways to switch tabs.
 
 </td>
 <td width="50%" valign="top">
 
 #### Make it yours
+- **Space themes:** each Space tints the Sidebar with its colours, including Zen's gradients.
+- A pure black theme for OLED screens, and a full-screen mode that hides Android's status and navigation bars.
 - Row size, accent colour, animations and haptics.
 - App icons, including a few made just for Sideraven.
 - **Backup:** save your Spaces, Essentials, pinned tabs and settings to a file, and restore them on another device.
@@ -245,12 +251,9 @@ Sideraven keeps Iceraven's removal of Firefox's data collection and adds no anal
 
 These aren't in Sideraven yet:
 
-- A Sidebar button for the synchronised tabs feature by firefox
-- Settings to hide Sidebar buttons you don't use, for a cleaner Sidebar
 - Split view, with two tabs side by side
 - Searching your tabs from the Sidebar, and selecting several tabs at once
 - Folders for ordinary tabs
-- Zen theming (a simpler version of it)
 
 ---
 

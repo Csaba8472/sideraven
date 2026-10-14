@@ -19,7 +19,7 @@ import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.PinnedAddressFollow
 import pt.dweep.sideraven.Spaces
 
-/** Spec 0008 ticket 03: open tabs follow when desktop changes an Essential's or Pinned Tab's address. */
+/** Open tabs follow when desktop changes an Essential's or Pinned Tab's address. */
 @RunWith(AndroidJUnit4::class)
 class FollowAddressChangeTest {
     private val server = FakeSyncServer()

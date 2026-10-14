@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import pt.dweep.sideraven.ui.SearchPlacement
 
 /**
- * The search request gate (spec 0006): Fenix's toolbar address, tapped, opens the Search Pop-up
+ * The search request gate: Fenix's toolbar address, tapped, opens the Search Pop-up
  * instead of Fenix's full-screen search wherever a Sidebar exists. Fenix's toolbar hooks call
  * [openFromToolbar]; the Sidebar host listens to [requests].
  */

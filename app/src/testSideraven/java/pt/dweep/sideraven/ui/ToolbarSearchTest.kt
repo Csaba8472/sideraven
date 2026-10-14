@@ -19,7 +19,7 @@ import org.robolectric.annotation.Config
 import pt.dweep.sideraven.ToolbarSearch
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 01: Fenix's toolbar address opens the Search Pop-up, over the toolbar. */
+/** Fenix's toolbar address opens the Search Pop-up, over the toolbar. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp-mdpi")
 class ToolbarSearchTest {

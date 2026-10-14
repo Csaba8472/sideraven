@@ -30,7 +30,7 @@ import pt.dweep.sideraven.frameInsets
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 13: the Sidebar on the left or the right. */
+/** The Sidebar on the left or the right. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SidebarSideTest {
@@ -89,14 +89,12 @@ class SidebarSideTest {
     }
 
     @Test
-    fun `THEN the side is a radio list writing the store`() {
+    fun `THEN the side is a segmented choice writing the store`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val screen = PreferenceManager(context).createPreferenceScreen(context)
         val store = InMemorySidebarModeStore()
 
-        SidebarPreferences.bindSide(context, screen, store, context.getSharedPreferences("radio-test", 0))
-            .first { it.key.endsWith(".Right") }
-            .callChangeListener(true)
+        SidebarPreferences.bindSide(context, screen, store).choose(SidebarSide.Right)
 
         assertEquals(SidebarSide.Right, store.sidebarSide.value)
     }

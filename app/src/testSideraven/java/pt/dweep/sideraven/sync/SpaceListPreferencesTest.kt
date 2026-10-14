@@ -13,7 +13,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spec 0007 ticket 02: Zen Sync's "Spaces on this tablet" list. */
+/** Zen Sync's "Spaces on this tablet" list. */
 @RunWith(AndroidJUnit4::class)
 class SpaceListPreferencesTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()

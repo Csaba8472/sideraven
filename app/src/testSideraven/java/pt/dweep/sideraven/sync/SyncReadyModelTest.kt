@@ -24,7 +24,7 @@ import pt.dweep.sideraven.Spaces
 import pt.dweep.sideraven.SpacesCodec
 import pt.dweep.sideraven.SpacesMiddleware
 
-/** Zen Sync ticket 03: edit times, the Local flag, Essential buckets and the last-synced store. */
+/** Edit times, the Local flag, Essential buckets and the last-synced store. */
 @RunWith(AndroidJUnit4::class)
 class SyncReadyModelTest {
     private var now = 1_000L

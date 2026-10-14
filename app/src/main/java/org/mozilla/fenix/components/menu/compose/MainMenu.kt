@@ -175,6 +175,8 @@ fun MainMenu(
     extensionsMenuItemDescription: String?,
     moreSettingsSubmenu: @Composable () -> Unit,
     extensionSubmenu: @Composable () -> Unit,
+    // SIDERAVEN-HOOK: closes the menu after one of Sideraven's entries is chosen.
+    onSideravenEntryChosen: () -> Unit = {},
 ) {
     MenuFrame(
         contentModifier =
@@ -312,6 +314,9 @@ fun MainMenu(
             onDownloadsMenuClick = onDownloadsMenuClick,
             onPasswordsMenuClick = onPasswordsMenuClick,
         )
+
+        // SIDERAVEN-HOOK: Sideraven's Optional Controls placed In the menu.
+        pt.dweep.sideraven.ui.SideravenMenuGroup(onChosen = onSideravenEntryChosen)
 
         MenuGroup {
             MozillaAccountMenuItem(

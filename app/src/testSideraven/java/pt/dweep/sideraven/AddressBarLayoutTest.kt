@@ -25,7 +25,7 @@ import pt.dweep.sideraven.theme.SideravenTheme
 import pt.dweep.sideraven.ui.SidebarContent
 import pt.dweep.sideraven.ui.SidebarTestTag
 
-/** Address Bar Layout ticket 02: the choice, the gate, and the layout button. */
+/** The choice, the gate, and the layout button. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class AddressBarLayoutTest {
@@ -60,16 +60,16 @@ class AddressBarLayoutTest {
     }
 
     @Test
-    fun `THEN the stored choice defaults to the Top layout and the layout button flips it`() {
+    fun `THEN the stored choice defaults to the Sidebar layout (to introduce it) and the layout button flips it`() {
         val modeStore = InMemorySidebarModeStore()
-        assertEquals(AddressBarLayout.Top, modeStore.addressBarLayout.value)
+        assertEquals(AddressBarLayout.Sidebar, modeStore.addressBarLayout.value)
         val handler = SidebarIntentHandler(selectTab = {}, openNewTab = {}, setAddressBarLayout = modeStore.addressBarLayout::set)
 
         handler.handle(SidebarIntent.ToggleAddressBarLayout, state(modeStore.addressBarLayout.value, SidebarMode.Persistent))
-        assertEquals(AddressBarLayout.Sidebar, modeStore.addressBarLayout.value)
+        assertEquals(AddressBarLayout.Top, modeStore.addressBarLayout.value)
 
         handler.handle(SidebarIntent.ToggleAddressBarLayout, state(modeStore.addressBarLayout.value, SidebarMode.Persistent))
-        assertEquals(AddressBarLayout.Top, modeStore.addressBarLayout.value)
+        assertEquals(AddressBarLayout.Sidebar, modeStore.addressBarLayout.value)
     }
 
     @Test

@@ -10,7 +10,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spec 0007 ticket 12: the accent colour. */
+/** The accent colour. */
 @RunWith(AndroidJUnit4::class)
 class AccentColourTest {
     @Test

@@ -20,7 +20,7 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.ByteArrayOutputStream
 import java.util.Base64
 
-/** Spec 0008 ticket 05: icons for unloaded, closed and desktop items. */
+/** Icons for unloaded, closed and desktop items. */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class IconStoreTest {

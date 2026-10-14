@@ -26,7 +26,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.SidebarWidth
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Polish round 2 review fixes, in the Sidebar's UI. */
+/** Review fixes in the Sidebar's UI. */
 @RunWith(AndroidJUnit4::class)
 class RoundTwoReviewTest {
     @get:Rule

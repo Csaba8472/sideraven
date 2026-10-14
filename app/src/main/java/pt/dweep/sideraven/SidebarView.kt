@@ -11,7 +11,7 @@ import mozilla.components.browser.state.state.MediaSessionState
 import mozilla.components.browser.state.state.TabSessionState
 
 /**
- * The part of the browser state the Sidebar shows (spec 0009): per tab its id, address, title,
+ * The part of the browser state the Sidebar shows: per tab its id, address, title,
  * icon, Browsing Mode, container, parent, activity times and audio, plus the selection and whether
  * restore is done. Loading progress, security, navigation and the rest of a page's churn are left
  * out, so they leave this view equal and the Sidebar untouched.

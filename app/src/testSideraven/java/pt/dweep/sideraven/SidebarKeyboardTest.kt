@@ -15,7 +15,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** Ticket 16: keyboard shortcuts. */
+/** Keyboard shortcuts. */
 class SidebarKeyboardTest {
     private fun key(
         keyCode: Int,
@@ -40,7 +40,7 @@ class SidebarKeyboardTest {
     @Test
     fun `THEN other keys, and every key while no Sidebar is shown, are left to Fenix`() {
         assertNull(key(KeyEvent.KEYCODE_S))
-        // Ctrl+T is New Tab (Sidebar Address Bar ticket 04); Ctrl+R stays with Fenix.
+        // Ctrl+T is New Tab; Ctrl+R stays with Fenix.
         assertNull(key(KeyEvent.KEYCODE_R))
         assertNull(key(KeyEvent.KEYCODE_1, ctrl = false))
         assertNull(key(KeyEvent.KEYCODE_S, shift = true, essentials = -1))

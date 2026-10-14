@@ -27,7 +27,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 04, seam 2: every way of closing a tab emits a close intent for that tab. */
+/** Every way of closing a tab emits a close intent for that tab. */
 @RunWith(AndroidJUnit4::class)
 class SidebarCloseUiTest {
     @get:Rule

@@ -7,7 +7,7 @@ package pt.dweep.sideraven.settings
 import org.mozilla.fenix.R
 
 /**
- * The categories of Sideraven Settings (spec 0008), in menu order, each its own screen.
+ * The categories of Sideraven Settings, in menu order, each its own screen.
  *
  * @property needsSidebar Only shown where there is a Sidebar to configure.
  */
@@ -18,7 +18,6 @@ enum class SettingsCategory(
 ) {
     Sidebar(R.string.sideraven_settings_sidebar, R.string.sideraven_category_sidebar_summary, needsSidebar = false),
     Tabs(R.string.sideraven_category_tabs, R.string.sideraven_category_tabs_summary),
-    Essentials(R.string.sideraven_essentials, R.string.sideraven_category_essentials_summary),
     AddressBar(R.string.sideraven_category_address, R.string.sideraven_category_address_summary),
     LookAndFeel(R.string.sideraven_settings_look, R.string.sideraven_category_look_summary),
     ZenSync(R.string.sideraven_zen_sync, R.string.sideraven_category_zen_summary, needsSidebar = false),

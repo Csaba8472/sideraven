@@ -15,7 +15,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spaces ticket 02: Home Space, assignment, per-Space Tab List, switching and creating. */
+/** Home Space, assignment, per-Space Tab List, switching and creating. */
 @RunWith(AndroidJUnit4::class)
 class SpacesTest {
     private val repository = InMemorySpacesRepository()

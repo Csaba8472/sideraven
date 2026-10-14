@@ -23,7 +23,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Polish round 2 ticket 04: a gesture let go short of acting springs back with a little bounce. */
+/** A gesture let go short of acting springs back with a little bounce. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class SpringBackTest {

@@ -4,6 +4,8 @@
 
 package pt.dweep.sideraven
 
+import android.app.Activity
+import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import android.content.Context
 import android.content.res.Configuration
 import kotlinx.coroutines.flow.Flow
@@ -13,14 +15,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 internal const val QUALIFYING_WIDTH_DP = 600
 
 /**
- * Which Qualifying Device tier the current app window falls into (see CONTEXT.md and ADR 0002).
+ * Which Qualifying Device tier the current app window falls into.
  * Always derived from the current window, never from the physical screen.
  */
 enum class SidebarTier {
     /** Window is narrower than 600dp and the phone Sidebar is off: no Sidebar, plain Fenix with the tab counter. */
     None,
 
-    /** Window is narrower than 600dp (a phone) and the phone Sidebar is on: the Sidebar in Auto-Hide Mode only. */
+    /** Window is narrower than 600dp (a phone) and the phone Sidebar is on: Auto-Hide Mode (first launch) or Collapsed. */
     Phone,
 
     /** Window's smallest width < 600dp but current width >= 600dp, e.g. a large phone in landscape. */
@@ -89,7 +91,13 @@ object SidebarGate {
     /** Whether Fenix's toolbar is hidden right now (the Sidebar layout is in effect); the hooks follow it. */
     val toolbarHidden = MutableStateFlow(false)
 
-    /** Tabs put to sleep by Unload, until they are opened again (CONTEXT.md, "Sleeping"). */
+    /**
+     * Whether [activity] has a Sidebar: every Fenix window except another app's tab (a Custom Tab).
+     * The flows here belong to the main window, so a Custom Tab neither sets nor follows them.
+     */
+    fun hostsSidebar(activity: Activity?): Boolean = activity != null && activity !is ExternalAppBrowserActivity
+
+    /** Tabs put to sleep by Unload, until they are opened again. */
     val sleepingTabs = MutableStateFlow<Set<String>>(emptySet())
 
     /** The frame's look, for the page corners at the toolbar's edge ([PageCornersDrawable]). */
@@ -102,7 +110,7 @@ object SidebarGate {
     fun showsSidebar(context: Context): Boolean = showsSidebar(SidebarTier.from(context))
 
     /**
-     * Whether the toolbar's tab counter slot shows (spec 0008): the tab counter when there's no
+     * Whether the toolbar's tab counter slot shows: the tab counter when there's no
      * Sidebar; beside a Sidebar only in Auto-Hide Mode with the Sidebar Flap off, as the Sidebar
      * Button, so there is always a visible way to open it. Elsewhere the Sidebar covers it.
      */
@@ -155,7 +163,7 @@ object SidebarGate {
 
     /**
      * Fenix's horizontal tablet Tab Strip never shows in Sideraven: wherever it would be
-     * eligible, the Sidebar replaces it (suppressed, not deleted — ADR 0006).
+     * eligible, the Sidebar replaces it (suppressed, not deleted).
      */
     fun allowsTabStrip(): Boolean = false
 }

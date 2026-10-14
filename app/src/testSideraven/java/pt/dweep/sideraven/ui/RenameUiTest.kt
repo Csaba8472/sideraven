@@ -25,7 +25,7 @@ import pt.dweep.sideraven.SidebarSpace
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 12: Rename in a Pinned Tab's menu. */
+/** Rename in a Pinned Tab's menu. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class RenameUiTest {

@@ -16,14 +16,14 @@ import pt.dweep.sideraven.allowDiskReads
 import pt.dweep.sideraven.theme.SpaceAccents
 
 /**
- * The user's Zen Sync choices (CONTEXT.md, "Zen Sync").
+ * The user's Zen Sync choices.
  *
  * @property enabled The main switch. Off by default.
  * @property firstSyncDone Whether the First Sync has run since Zen Sync was last turned on.
  * @property syncSpaces Spaces with their Pinned Tabs and Folders.
  * @property syncEssentials Essentials.
  * @property shareColours "Share Space colours with Zen".
- * @property desktopOnly Desktop-only Spaces (CONTEXT.md): desktop Spaces switched off on this device.
+ * @property desktopOnly Desktop-only Spaces: desktop Spaces switched off on this device.
  * @property seenSpaces Desktop Spaces this device has already met (anything else arrives switched off).
  * @property newOnDesktop Desktop-only Spaces still marked "New on desktop".
  * @property syncAutomatically Sync on its own (app start and return, every few minutes, after
@@ -126,6 +126,21 @@ object ZenColours {
             return dr * dr + dg * dg + db * db
         }
         return SpaceAccents.all.minByOrNull { minOf(distance(it.light), distance(it.dark)) }?.key
+    }
+
+    /**
+     * The gradient a Space from Zen brings (its colours, top to bottom, as lowercase `#rrggbb`), or
+     * empty: for a Space made here, when Space colours aren't shared, or once its accent was changed
+     * here (the desktop gradient no longer matches it).
+     */
+    fun gradientOf(
+        space: pt.dweep.sideraven.Space,
+        shareColours: Boolean,
+    ): List<String> {
+        if (!shareColours) return emptyList()
+        val origin = ZenOrigin.decode(space.extra) ?: return emptyList()
+        if (origin.accent != null && origin.accent != space.accent) return emptyList()
+        return ZenWire.themeOf(origin.data)?.gradientColors.orEmpty()
     }
 
     /** A one-colour Zen theme for an accent changed on the tablet. */

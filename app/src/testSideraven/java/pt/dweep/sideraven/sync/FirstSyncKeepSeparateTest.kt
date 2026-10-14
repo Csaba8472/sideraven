@@ -21,7 +21,7 @@ import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.PinnedTab
 import pt.dweep.sideraven.Spaces
 
-/** Zen Sync ticket 04: First Sync, "Keep tablet separate". */
+/** First Sync, "Keep tablet separate". */
 @RunWith(AndroidJUnit4::class)
 class FirstSyncKeepSeparateTest {
     private val server = FakeSyncServer()

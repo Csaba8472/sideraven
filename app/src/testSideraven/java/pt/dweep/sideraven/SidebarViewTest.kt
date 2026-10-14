@@ -17,7 +17,7 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spec 0009 ticket 03: the Sidebar follows only what it shows. */
+/** The Sidebar follows only what it shows. */
 @RunWith(AndroidJUnit4::class)
 class SidebarViewTest {
     private object Controller : MediaSession.Controller {

@@ -19,7 +19,7 @@ import org.robolectric.shadows.ShadowLooper
 import pt.dweep.sideraven.InMemorySidebarModeStore
 import pt.dweep.sideraven.SidebarTier
 
-/** Polish round 2 review: on a phone with the Sidebar off, the switch to turn it back on stays reachable. */
+/** On a phone with the Sidebar off, the switch to turn it back on stays reachable. */
 @RunWith(AndroidJUnit4::class)
 class PhoneSettingsReachTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
@@ -41,16 +41,16 @@ class PhoneSettingsReachTest {
     @Test
     fun `GIVEN a phone with the Sidebar off THEN its Sidebar screen holds only the phone switch`() {
         val screen = screen()
-        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.None, store, context.getSharedPreferences("reach-test", 0))
+        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.None, store)
 
-        assertEquals(listOf("Sidebar on phones"), screen.groups())
+        assertEquals(listOf("Phones"), screen.groups())
     }
 
     @Test
     fun `WHEN the phone switch is turned back on THEN the screen rebuilds with the Sidebar's options`() {
         store.phoneSidebar.set(false)
         val screen = screen()
-        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.None, store, context.getSharedPreferences("reach-test", 0)) { store.phoneSidebar.value.let { if (it) SidebarTier.Phone else SidebarTier.None } }
+        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.None, store) { store.phoneSidebar.value.let { if (it) SidebarTier.Phone else SidebarTier.None } }
         val phone = screen.findPreference<SwitchPreferenceCompat>(SidebarPreferences.PHONE_SIDEBAR_KEY)!!
 
         phone.onPreferenceChangeListener!!.onPreferenceChange(phone, true)

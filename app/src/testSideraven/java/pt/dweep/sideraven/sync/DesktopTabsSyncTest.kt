@@ -18,7 +18,7 @@ import pt.dweep.sideraven.InMemoryEssentialsRepository
 import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.Spaces
 
-/** Spec 0007 ticket 05: desktop's open tabs are kept read-only as Desktop Tabs. */
+/** Desktop's open tabs are kept read-only as Desktop Tabs. */
 @RunWith(AndroidJUnit4::class)
 class DesktopTabsSyncTest {
     private val server = FakeSyncServer()

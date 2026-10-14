@@ -22,7 +22,7 @@ import org.mozilla.fenix.theme.Theme
 import kotlin.math.max
 import kotlin.math.min
 
-/** Ticket 18: the Zen scheme is complete and the Tab Tray wrapper applies it (Private excepted). */
+/** The Zen scheme is complete and the Tab Tray wrapper applies it (Private excepted). */
 @RunWith(AndroidJUnit4::class)
 class ZenThemeTest {
     @get:Rule

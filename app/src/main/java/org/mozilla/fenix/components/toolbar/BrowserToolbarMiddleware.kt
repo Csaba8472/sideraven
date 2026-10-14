@@ -859,7 +859,7 @@ class BrowserToolbarMiddleware(
             listOfNotNull(
                 primarySlotAction?.let {
                     ToolbarActionConfig(it, true) {
-                        // SIDERAVEN-HOOK: no second New Tab beside the Sidebar's (spec 0008)
+                        // SIDERAVEN-HOOK: no second New Tab beside the Sidebar's
                         (!shouldUseExpandedToolbar || !isTallWindow || isWideWindow) &&
                             !pt.dweep.sideraven.SidebarGate.hidesShortcut(uiContext, it == ToolbarAction.NewTab)
                         // SIDERAVEN-HOOK-END
@@ -1349,7 +1349,7 @@ class BrowserToolbarMiddleware(
                     onClick = TranslateClicked(source),
                 )
 
-            // SIDERAVEN-HOOK: beside a Sidebar the slot is the Sidebar Button (spec 0008)
+            // SIDERAVEN-HOOK: beside a Sidebar the slot is the Sidebar Button
             ToolbarAction.TabCounter if pt.dweep.sideraven.SidebarGate.showsSidebar(uiContext) ->
                 ActionButtonRes(
                     drawableResId = R.drawable.sideraven_ic_sidebar_24,

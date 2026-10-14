@@ -30,7 +30,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 10, seam 2: the Essentials Section and pinning from the Tab Context Menu. */
+/** The Essentials Section and pinning from the Tab Context Menu. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class EssentialsUiTest {

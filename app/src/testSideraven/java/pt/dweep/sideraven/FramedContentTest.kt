@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.GraphicsMode
 
-/** Ticket 17: framed content insets and corner masks. */
+/** Framed content insets and corner masks. */
 @RunWith(AndroidJUnit4::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class FramedContentTest {
@@ -35,7 +35,7 @@ class FramedContentTest {
         val mask =
             CornerMaskView(ApplicationProvider.getApplicationContext()).apply {
                 radius = 20f
-                frameColor = Color.RED
+                setFrameColors(Color.RED, Color.RED)
                 layout(0, 0, 200, 100)
             }
         val bitmap = Bitmap.createBitmap(200, 100, Bitmap.Config.ARGB_8888)
@@ -53,5 +53,22 @@ class FramedContentTest {
 
         assertFalse(mask.isClickable)
         assertFalse(mask.isFocusable)
+    }
+
+    @Test
+    fun `GIVEN a Space theme THEN the top corners take the gradient's top colour and the bottom ones its bottom`() {
+        val mask =
+            CornerMaskView(ApplicationProvider.getApplicationContext()).apply {
+                radius = 20f
+                layout(0, 0, 200, 100)
+                setFrameColors(Color.RED, Color.BLUE)
+            }
+        val bitmap = Bitmap.createBitmap(200, 100, Bitmap.Config.ARGB_8888)
+        mask.draw(Canvas(bitmap))
+
+        val top = bitmap.getPixel(0, 0)
+        val bottom = bitmap.getPixel(199, 99)
+        assertTrue("top ${Integer.toHexString(top)}", Color.red(top) > Color.blue(top))
+        assertTrue("bottom ${Integer.toHexString(bottom)}", Color.blue(bottom) > Color.red(bottom))
     }
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Zen's data-URI favicons, kept out of the stored Essentials, Pinned Tabs, Folders and Spaces
- * (spec 0009). A synced item's `extra` keeps Zen's record so it can be written back unchanged;
+ *. A synced item's `extra` keeps Zen's record so it can be written back unchanged;
  * its favicon (up to hundreds of KB of text) is stored here instead, by content hash, and the
  * record keeps a short reference. [restore] puts the data back for uploads, so Zen receives the
  * record exactly as it arrived.
@@ -75,7 +75,7 @@ object ZenBlobs {
         return copy
     }
 
-    /** Whether [extra] still holds a data URI [stash] would move (stored before spec 0009). */
+    /** Whether [extra] still holds a data URI [stash] would move (stored by earlier versions). */
     fun holdsInline(extra: String?): Boolean =
         extra != null && extra.contains("\"data:") && ZenOrigin.decode(extra)?.data?.let { largeFields(it).isNotEmpty() } == true
 

@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 import pt.dweep.sideraven.InMemorySidebarModeStore
 import pt.dweep.sideraven.SidebarTier
 
-/** Spec 0008 ticket 16: Sideraven Settings in categories, every choice headed and explained. */
+/** Sideraven Settings in categories, every choice headed and explained. */
 @RunWith(AndroidJUnit4::class)
 class SettingsCategoriesTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
@@ -34,7 +34,7 @@ class SettingsCategoriesTest {
         SideravenSettings.installMenu(context, screen, SidebarTier.Tablet) { opened += it }
 
         val rows = screen.children().filter { it.isVisible && it.key?.startsWith(SideravenSettings.CATEGORY_PREFIX) == true }
-        assertEquals(listOf("Sidebar", "Tabs", "Essentials", "Address bar & search", "Look and feel", "Zen Sync", "Backup"), rows.map { it.title.toString() })
+        assertEquals(listOf("Sidebar", "Tabs", "Address bar & search", "Look and feel", "Zen Sync", "Backup"), rows.map { it.title.toString() })
         rows.forEach { assertTrue(it.title.toString(), !it.summary.isNullOrBlank()) }
         rows[1].performClick()
         assertEquals(listOf(SettingsCategory.Tabs), opened)
@@ -56,7 +56,7 @@ class SettingsCategoriesTest {
             if (category == SettingsCategory.Backup) {
                 BackupPreferences.install(context, page, onExport = {}, onImport = {})
             } else {
-                SidebarPreferences.install(context, page, category, SidebarTier.Tablet, store, context.getSharedPreferences("radio-test", 0))
+                SidebarPreferences.install(context, page, category, SidebarTier.Tablet, store)
             }
 
             val groups = page.children().filterIsInstance<PreferenceCategory>()
@@ -72,18 +72,18 @@ class SettingsCategoriesTest {
     }
 
     @Test
-    fun `THEN the Sidebar screen holds its mode, the phone switch, side, width and how to open it`() {
-        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.Tablet, store, context.getSharedPreferences("radio-test", 0))
+    fun `THEN the Sidebar screen holds its mode, position and size, buttons, how to open it and the phone switch`() {
+        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.Tablet, store)
 
         assertEquals(
-            listOf("Mode", "Sidebar on phones", "Side", "Width", "Opening the sidebar"),
+            listOf("Mode", "Position and size", "Buttons in the sidebar", "Opening the sidebar", "Phones"),
             screen.children().filterIsInstance<PreferenceCategory>().map { it.title.toString() },
         )
     }
 
     @Test
     fun `THEN the accent is chosen from colour swatches`() {
-        SidebarPreferences.install(context, screen, SettingsCategory.LookAndFeel, SidebarTier.Tablet, store, context.getSharedPreferences("radio-test", 0))
+        SidebarPreferences.install(context, screen, SettingsCategory.LookAndFeel, SidebarTier.Tablet, store)
 
         val swatches = screen.findPreference<AccentSwatchesPreference>(SidebarPreferences.ACCENT_KEY)!!
         swatches.choose("teal")
@@ -94,7 +94,7 @@ class SettingsCategoriesTest {
 
     @Test
     fun `WHEN Use the sidebar on phones is switched off THEN the setting follows`() {
-        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.Phone, store, context.getSharedPreferences("radio-test", 0))
+        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.Phone, store)
         val phone = screen.findPreference<androidx.preference.SwitchPreferenceCompat>(SidebarPreferences.PHONE_SIDEBAR_KEY)!!
         assertTrue(phone.isChecked)
 
@@ -105,7 +105,7 @@ class SettingsCategoriesTest {
 
     @Test
     fun `GIVEN a phone THEN the Swipe Zone switch shows the phone's own setting, off by default`() {
-        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.Phone, store, context.getSharedPreferences("radio-test", 0))
+        SidebarPreferences.install(context, screen, SettingsCategory.Sidebar, SidebarTier.Phone, store)
         val zone = screen.findPreference<androidx.preference.SwitchPreferenceCompat>(SidebarPreferences.SWIPE_ZONE_KEY)!!
 
         assertFalse(zone.isChecked)

@@ -12,7 +12,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** Ticket 05: Sidebar Modes, the Toggle and tier fallback. */
+/** Sidebar Modes, the Toggle and tier fallback. */
 class SidebarModeTest {
     private val store =
         BrowserStore().apply {

@@ -26,7 +26,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 10: Animations Full, Reduced or Off. */
+/** Animations Full, Reduced or Off. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class AnimationLevelTest {
@@ -66,13 +66,12 @@ class AnimationLevelTest {
     }
 
     @Test
-    fun `THEN it is a radio list writing the store`() {
+    fun `THEN it is a segmented choice writing the store`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val screen = PreferenceManager(context).createPreferenceScreen(context)
         val store = InMemorySidebarModeStore()
 
-        SidebarPreferences.bindAnimations(context, screen, store, context.getSharedPreferences("radio-test", 0))
-            .first { it.key.endsWith(".Reduced") }.callChangeListener(true)
+        SidebarPreferences.bindAnimations(context, screen, store).choose(AnimationLevel.Reduced)
 
         assertEquals(AnimationLevel.Reduced, store.animations.value)
     }

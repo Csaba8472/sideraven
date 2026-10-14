@@ -13,7 +13,7 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Ticket 15: audio state flows from the browser store into Tab List items. */
+/** Audio state flows from the browser store into Tab List items. */
 class AudioIndicatorTest {
     private fun media(
         playback: MediaSession.PlaybackState,

@@ -12,7 +12,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Ticket 06: Auto-Hide Mode reveal and dismissal rules, against a real browser store. */
+/** Auto-Hide Mode reveal and dismissal rules, against a real browser store. */
 class AutoHideTest {
     private val store =
         BrowserStore().apply {

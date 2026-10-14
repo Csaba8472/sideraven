@@ -23,7 +23,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.sync.DesktopTab
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 05: the "On desktop" group at the end of the Tab List. */
+/** The "On desktop" group at the end of the Tab List. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class DesktopTabsUiTest {

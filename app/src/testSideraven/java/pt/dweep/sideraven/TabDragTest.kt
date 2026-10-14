@@ -14,7 +14,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
- * Ticket 11: the display-index -> browser-order translation. The Tab List shows the browser's
+ * The display-index -> browser-order translation. The Tab List shows the browser's
  * order reversed, so every on-screen move must land the opposite way in the store.
  */
 class TabDragTest {

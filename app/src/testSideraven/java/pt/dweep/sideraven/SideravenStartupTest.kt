@@ -14,7 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spec 0009 ticket 04: Sideraven's stores load in the background as the app starts. */
+/** Sideraven's stores load in the background as the app starts. */
 @RunWith(AndroidJUnit4::class)
 class SideravenStartupTest {
     private val context = ApplicationProvider.getApplicationContext<android.content.Context>()

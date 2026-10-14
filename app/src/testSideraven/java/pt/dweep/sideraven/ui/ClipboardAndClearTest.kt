@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 04: the copied-link chip and the clear button. */
+/** The copied-link chip and the clear button. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class ClipboardAndClearTest {

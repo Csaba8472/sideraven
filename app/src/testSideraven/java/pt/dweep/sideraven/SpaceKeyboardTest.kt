@@ -14,7 +14,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spaces ticket 06: Ctrl+Alt+Left/Right switch Spaces, wrapping and without animation. */
+/** Ctrl+Alt+Left/Right switch Spaces, wrapping and without animation. */
 @RunWith(AndroidJUnit4::class)
 class SpaceKeyboardTest {
     private val spaces = Spaces(InMemorySpacesRepository())

@@ -14,7 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import pt.dweep.sideraven.sync.DesktopTab
 
-/** Spec 0007 ticket 05: Desktop Tabs in a synced Space's Tab List. */
+/** Desktop Tabs in a synced Space's Tab List. */
 @RunWith(AndroidJUnit4::class)
 class DesktopTabsTest {
     private val spaces = Spaces(InMemorySpacesRepository())

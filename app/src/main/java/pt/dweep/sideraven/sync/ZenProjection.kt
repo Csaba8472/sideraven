@@ -23,7 +23,7 @@ data class ZenOrigin(
     /** For a Space: its accent when it last synced. A different accent now is the user's change. */
     val accent: String? = null,
 ) {
-    /** Stored form; Zen's data-URI favicons go to [ZenBlobs], leaving references (spec 0009). */
+    /** Stored form; Zen's data-URI favicons go to [ZenBlobs], leaving references. */
     fun encode(): String = JSONObject().put("rid", recordId).put("data", ZenBlobs.stash(data)).apply { accent?.let { put("accent", it) } }.toString()
 
     /** Stored form with the favicons inline: a backup carries them, since the next install's store is empty. */
@@ -55,7 +55,7 @@ data class ZenImport(
     val essentials: List<Essential>,
 )
 
-/** Mapping between Zen's records and Sideraven's model (spec 0003, "Record mapping summary"). */
+/** Mapping between Zen's records and Sideraven's model. */
 object ZenProjection {
     const val DEFAULT_BUCKET = "default"
 

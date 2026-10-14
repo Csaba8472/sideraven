@@ -20,7 +20,7 @@ import pt.dweep.sideraven.InMemoryEssentialsRepository
 import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.Spaces
 
-/** Spec 0007 ticket 03: new desktop Spaces arrive switched off. */
+/** New desktop Spaces arrive switched off. */
 @RunWith(AndroidJUnit4::class)
 class NewDesktopSpacesTest {
     private val server = FakeSyncServer()

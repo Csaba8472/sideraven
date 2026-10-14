@@ -23,7 +23,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 09: Unload in a normal tab's menu, and sleeping tabs marked. */
+/** Unload in a normal tab's menu, and sleeping tabs marked. */
 @RunWith(AndroidJUnit4::class)
 class SleepingUiTest {
     @get:Rule

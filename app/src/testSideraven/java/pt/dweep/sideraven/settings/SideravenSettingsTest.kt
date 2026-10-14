@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 import pt.dweep.sideraven.InMemorySidebarModeStore
 import pt.dweep.sideraven.NewTabBehaviour
 
-/** Address Bar Layout ticket 01: Sideraven Settings, and its entry in Fenix's Settings. */
+/** Sideraven Settings, and its entry in Fenix's Settings. */
 @RunWith(AndroidJUnit4::class)
 class SideravenSettingsTest {
     private val context = ApplicationProvider.getApplicationContext<android.content.Context>()
@@ -46,9 +46,7 @@ class SideravenSettingsTest {
     @Test
     fun `THEN the moved New Tab setting still writes the same store`() {
         val store = InMemorySidebarModeStore()
-        val radios = SidebarPreferences.bindNewTab(context, screen, store, context.getSharedPreferences("radio-test", 0))
-
-        radios.first { it.key.endsWith(".Blank") }.callChangeListener(true)
+        SidebarPreferences.bindNewTab(context, screen, store).choose(NewTabBehaviour.Blank)
 
         assertEquals(NewTabBehaviour.Blank, store.newTabBehaviour.value)
     }

@@ -33,7 +33,7 @@ import pt.dweep.sideraven.ui.SidebarContent
 import pt.dweep.sideraven.ui.SidebarTestTag
 import java.io.IOException
 
-/** Zen Sync ticket 05: when syncs run, and what the user sees. */
+/** When syncs run, and what the user sees. */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")

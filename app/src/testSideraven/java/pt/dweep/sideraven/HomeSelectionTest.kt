@@ -10,7 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import pt.dweep.sideraven.sync.DesktopTab
 
-/** Spec 0008 ticket 01: choosing something in the Sidebar shows it, even from Fenix's home screen. */
+/** Choosing something in the Sidebar shows it, even from Fenix's home screen. */
 @RunWith(AndroidJUnit4::class)
 class HomeSelectionTest {
     private val shown = mutableListOf<String>()

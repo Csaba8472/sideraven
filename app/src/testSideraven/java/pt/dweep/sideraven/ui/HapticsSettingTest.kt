@@ -31,7 +31,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.settings.SidebarPreferences
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 09: the Haptic ticks setting. */
+/** The Haptic ticks setting. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class HapticsSettingTest {

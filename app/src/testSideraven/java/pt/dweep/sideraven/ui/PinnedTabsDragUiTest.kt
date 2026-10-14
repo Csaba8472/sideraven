@@ -22,7 +22,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 08: dragging Pinned Tabs. */
+/** Dragging Pinned Tabs. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class PinnedTabsDragUiTest {

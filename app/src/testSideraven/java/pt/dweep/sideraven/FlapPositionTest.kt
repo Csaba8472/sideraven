@@ -8,7 +8,7 @@ import mozilla.components.browser.state.state.BrowserState
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Polish round 2: the Sidebar Flap stays where it was moved. */
+/** The Sidebar Flap stays where it was moved. */
 class FlapPositionTest {
     private val store = InMemorySidebarModeStore(SidebarMode.AutoHide)
     private val handler = SidebarIntentHandler(selectTab = {}, openNewTab = {}, setFlapPosition = store.flapPosition::set)

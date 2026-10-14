@@ -61,7 +61,7 @@ private fun rubberBand(
 ): Float = (1f - 1f / (overshoot * RUBBER_BAND / dimension + 1f)) * dimension
 
 /**
- * Tab Close Gesture (ADR 0003, amended in spec 0008): swipe toward the nearest screen edge, like
+ * Tab Close Gesture: swipe toward the nearest screen edge, like
  * Apple Mail. The row follows the finger; the wrong way rubber-bands; a × grows in behind it and a
  * haptic tick marks the point where letting go closes. A committed swipe throws the row off at the
  * finger's speed, folds its height shut so the rows below rise with it, and only then [onClose].

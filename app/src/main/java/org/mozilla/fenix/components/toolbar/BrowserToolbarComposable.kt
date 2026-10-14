@@ -145,7 +145,7 @@ class BrowserToolbarComposable(
                             )
                         }
 
-                    // SIDERAVEN-HOOK: beside a Sidebar the toolbar takes its colour (spec 0008)
+                    // SIDERAVEN-HOOK: beside a Sidebar the toolbar takes its colour
                     MaterialTheme(colorScheme = pt.dweep.sideraven.SidebarToolbarColors.scheme(colorScheme, customTab = customTabSession != null)) {
                         when (shouldShowTabStrip) {
                             true ->

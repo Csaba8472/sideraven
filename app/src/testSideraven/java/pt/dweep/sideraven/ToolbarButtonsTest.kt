@@ -18,7 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spec 0008 ticket 15: Fenix's toolbar beside the Sidebar. */
+/** Fenix's toolbar beside the Sidebar. */
 @RunWith(AndroidJUnit4::class)
 class ToolbarButtonsTest {
     @get:Rule

@@ -12,7 +12,7 @@ import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.Store
 
 /**
- * Every new tab appears at the top of the Tab List (CONTEXT.md, "Tab List"), or at its bottom when
+ * Every new tab appears at the top of the Tab List, or at its bottom when
  * Sideraven Settings say so ([position]).
  *
  * The Tab List shows the browser's tab order newest-first, so "top" means the **end** of the

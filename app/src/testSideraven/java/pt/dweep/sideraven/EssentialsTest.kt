@@ -18,7 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
-/** Ticket 10: Essentials against a real browser store and an in-memory repository. */
+/** Essentials against a real browser store and an in-memory repository. */
 @RunWith(AndroidJUnit4::class)
 class EssentialsTest {
     private val store =

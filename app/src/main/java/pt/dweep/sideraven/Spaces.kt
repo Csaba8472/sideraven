@@ -12,11 +12,11 @@ import mozilla.components.browser.state.state.TabSessionState
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Pinned Tabs per Space (CONTEXT.md, "Pinned Tab"); the same rule as the Essentials Cap. */
+/** Pinned Tabs per Space; the same rule as the Essentials Cap. */
 const val PINNED_TABS_CAP = 12
 
 /**
- * A URL pinned to one Space (CONTEXT.md, "Pinned Tab"). Like an Essential it keeps the URL it was
+ * A URL pinned to one Space. Like an Essential it keeps the URL it was
  * pinned at; unlike one it belongs to a single Space.
  *
  * @property folderId The Folder it sits in, or null for the Space's top level.
@@ -38,7 +38,7 @@ data class PinnedTab(
 }
 
 /**
- * A Folder (CONTEXT.md): a named, collapsible group of Pinned Tabs inside a Space. Folders from
+ * A Folder: a named, collapsible group of Pinned Tabs inside a Space. Folders from
  * Zen Sync may nest ([parentId]); on this device only top-level Folders are created.
  *
  * @property extra Data Sideraven doesn't model (e.g. a live folder's config), written back unchanged.
@@ -59,13 +59,13 @@ const val DEFAULT_FOLDER_ICON = "📁"
 const val DEFAULT_SPACE_ACCENT = "ember"
 
 /**
- * A Space (CONTEXT.md): a named group of tabs.
+ * A Space: a named group of tabs.
  *
  * @property icon An emoji, or the name of one of Zen's built-in icons.
  * @property accent A key into the Space accent palette.
  * @property lastSelectedTabId The tab to return to when switching back to this Space.
  * @property extra Data Sideraven doesn't model (a JSON object as text), written back unchanged.
- * @property isLocal A Local Space (CONTEXT.md): never uploaded or deleted by Zen Sync.
+ * @property isLocal A Local Space: never uploaded or deleted by Zen Sync.
  * @property modified When the user last changed its name, icon, colour or contents here (epoch ms).
  */
 data class Space(
@@ -317,7 +317,7 @@ class PreferencesSpacesRepository private constructor(context: Context) : Spaces
     }
 }
 
-/** Spaces operations (CONTEXT.md, "Space"). */
+/** Spaces operations. */
 class Spaces(
     private val repository: SpacesRepository,
     private val homeName: String = SpacesData.HOME_NAME,

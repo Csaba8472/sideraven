@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config
 import pt.dweep.sideraven.AnimationLevel
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0008 ticket 11 (audit 6): the Search Pop-up enters and exits, as the Animations setting says. */
+/** The Search Pop-up enters and exits, as the Animations setting says. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class PopupMotionTest {

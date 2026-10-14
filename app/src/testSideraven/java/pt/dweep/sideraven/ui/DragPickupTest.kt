@@ -21,7 +21,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0008 ticket 13 (audit 9): a dragged tab lifts from where the finger holds it. */
+/** A dragged tab lifts from where the finger holds it. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class DragPickupTest {

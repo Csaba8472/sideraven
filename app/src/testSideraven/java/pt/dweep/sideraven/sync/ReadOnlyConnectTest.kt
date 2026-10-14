@@ -13,7 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 
-/** Zen Sync ticket 02: reading (only reading) what desktop has. */
+/** Reading (only reading) what desktop has. */
 @RunWith(AndroidJUnit4::class)
 class ReadOnlyConnectTest {
     private val server = FakeSyncServer(pageSize = 2)

@@ -744,7 +744,7 @@ class HomeFragment : Fragment() {
                             },
                             containerColor = Color.Transparent,
                         ) { innerPadding ->
-                            // SIDERAVEN-HOOK: home as a card inside the frame (spec 0006)
+                            // SIDERAVEN-HOOK: home as a card inside the frame
                             pt.dweep.sideraven.HomeCard(innerPadding) {
                             HomeContent(
                                 appState = appState.value,

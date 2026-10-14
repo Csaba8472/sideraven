@@ -32,7 +32,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Polish round 2: the Auto-Hide Sidebar comes out like a tray, one rigid piece with its handle. */
+/** The Auto-Hide Sidebar comes out like a tray, one rigid piece with its handle. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class AutoHideTrayTest {

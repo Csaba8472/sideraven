@@ -222,13 +222,18 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler, SystemIns
 
         if (settings.isSwipeToolbarToShowTabsEnabled) {
             binding.gestureLayout.addGestureListener(
-                ToolbarVerticalGesturesHandler(
-                    appStore = components.appStore,
-                    toolbarLayout = browserToolbar.layout,
-                    navBarLayout = browserNavigationBar?.layout,
-                    toolbarPosition = settings.toolbarPosition,
-                    navController = findNavController(),
-                )
+                // SIDERAVEN-HOOK: off beside a Sidebar (the tabs are in it; Fenix's home toolbar has no such swipe)
+                pt.dweep.sideraven.SidebarGestures.onlyWithoutSidebar(
+                    requireContext(),
+                    ToolbarVerticalGesturesHandler(
+                        appStore = components.appStore,
+                        toolbarLayout = browserToolbar.layout,
+                        navBarLayout = browserNavigationBar?.layout,
+                        toolbarPosition = settings.toolbarPosition,
+                        navController = findNavController(),
+                    ),
+                ),
+                // SIDERAVEN-HOOK-END
             )
         }
     }

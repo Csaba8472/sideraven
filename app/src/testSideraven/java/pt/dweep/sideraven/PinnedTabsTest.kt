@@ -16,7 +16,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spaces ticket 07: Pinned Tabs — pin to the current Space, show, select, reset, unpin. */
+/** Pinned Tabs — pin to the current Space, show, select, reset, unpin. */
 @RunWith(AndroidJUnit4::class)
 class PinnedTabsTest {
     private val repository = InMemorySpacesRepository()

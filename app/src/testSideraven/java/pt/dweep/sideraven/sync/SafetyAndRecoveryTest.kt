@@ -22,7 +22,7 @@ import pt.dweep.sideraven.InMemoryEssentialsRepository
 import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.Spaces
 
-/** Zen Sync ticket 10: never damage a newer Zen's data; recover by itself; never create keys. */
+/** Never damage a newer Zen's data; recover by itself; never create keys. */
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class SafetyAndRecoveryTest {

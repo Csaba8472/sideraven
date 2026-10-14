@@ -13,7 +13,7 @@ import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Zen Sync ticket 01: the storage client against the contract's recorded HTTP exchanges. */
+/** The storage client against the contract's recorded HTTP exchanges. */
 @RunWith(AndroidJUnit4::class)
 class HttpSyncStorageTest {
     private val requests = mutableListOf<SyncHttpRequest>()

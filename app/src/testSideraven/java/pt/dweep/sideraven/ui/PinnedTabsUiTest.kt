@@ -27,7 +27,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 07: the pinned block and "Pin to space". */
+/** The pinned block and "Pin to space". */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class PinnedTabsUiTest {

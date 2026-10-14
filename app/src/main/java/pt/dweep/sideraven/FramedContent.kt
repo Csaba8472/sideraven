@@ -6,9 +6,11 @@ package pt.dweep.sideraven
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.graphics.Shader
 import android.view.View
 
 /**
@@ -62,13 +64,41 @@ class CornerMaskView(context: Context) : View(context) {
             invalidate()
         }
 
-    /** The frame colour (ARGB). */
+    /** The frame colour (ARGB): the top of the frame's gradient. */
     var frameColor: Int = 0
-        set(value) {
-            field = value
-            paint.color = value
-            invalidate()
-        }
+        private set
+    private var frameBottom: Int = 0
+
+    /** The frame's colours, top to bottom (the same for a plain frame). */
+    fun setFrameColors(
+        top: Int,
+        bottom: Int,
+    ) {
+        frameColor = top
+        frameBottom = bottom
+        updateShader()
+        invalidate()
+    }
+
+    private fun updateShader() {
+        paint.color = frameColor
+        paint.shader =
+            if (frameColor == frameBottom || height == 0) {
+                null
+            } else {
+                LinearGradient(0f, 0f, 0f, height.toFloat(), frameColor, frameBottom, Shader.TileMode.CLAMP)
+            }
+    }
+
+    override fun onSizeChanged(
+        w: Int,
+        h: Int,
+        oldw: Int,
+        oldh: Int,
+    ) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        updateShader()
+    }
 
     init {
         isClickable = false

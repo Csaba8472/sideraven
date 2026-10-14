@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 03: the engine chip, for one search with another engine or scope. */
+/** The engine chip, for one search with another engine or scope. */
 @OptIn(ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")

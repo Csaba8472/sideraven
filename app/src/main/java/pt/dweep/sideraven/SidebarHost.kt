@@ -4,17 +4,22 @@
 
 package pt.dweep.sideraven
 
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.Lifecycle
+import android.content.res.Configuration
 import android.view.Gravity
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.Toast
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -91,7 +96,9 @@ internal data class SidebarInputs(
     val maxActiveTime: Long = Long.MAX_VALUE,
     val flapEnabled: Boolean = true,
     val flapPosition: Float = 0.5f,
-    val sectionShares: SectionShares = SectionShares(),
+    val controlPlaces: ControlPlaces = ControlPlaces(),
+    val arranging: Boolean = false,
+    val arranged: ArrangedShares = ArrangedShares(),
     val spaces: SpacesData? = null,
     val addressBarLayout: AddressBarLayout = AddressBarLayout.Top,
     val sidebarWidth: SidebarWidth = SidebarWidth.Standard,
@@ -131,7 +138,9 @@ internal fun rememberSidebarUiState(
                 maxActiveTime = maxActiveTime,
                 flapEnabled = flapEnabled,
                 flapPosition = flapPosition,
-                sectionShares = sectionShares,
+                controlPlaces = controlPlaces,
+                arranging = arranging,
+                arranged = arranged,
                 spaces = spaces,
                 addressBarLayout = addressBarLayout,
                 sidebarWidth = sidebarWidth,
@@ -151,6 +160,8 @@ object SidebarHost {
         activity: HomeActivity,
         contentContainer: View,
     ) {
+        if (!SidebarGate.hostsSidebar(activity)) return
+        SidebarFullScreen.follow(activity)
         val parent = contentContainer.parent as ViewGroup
         val index = parent.indexOfChild(contentContainer)
         val containerParams = contentContainer.layoutParams
@@ -196,10 +207,10 @@ object SidebarHost {
                             dockedWidthPx = widthPx
                             applyFrame()
                         },
-                        onFrameChanged = { active, color ->
+                        onFrameChanged = { active, top, bottom ->
                             framed = active
-                            frame.setBackgroundColor(if (active) color else Color.TRANSPARENT)
-                            cornerMask.frameColor = color
+                            frame.background = if (active) GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(top, bottom)) else null
+                            cornerMask.setFrameColors(top, bottom)
                             applyFrame()
                         },
                         // The revealed Auto-Hide Sidebar and its Scrim cover the whole content.
@@ -240,7 +251,7 @@ private fun SidebarRoot(
     snackbarParent: View,
     onDockedWidthChanged: (widthPx: Int) -> Unit,
     onOverlayActiveChanged: (Boolean) -> Unit,
-    onFrameChanged: (active: Boolean, color: Int) -> Unit,
+    onFrameChanged: (active: Boolean, top: Int, bottom: Int) -> Unit,
 ) {
     val components = activity.components
     val modeStore = remember(activity) { PreferencesSidebarModeStore.get(activity) }
@@ -251,7 +262,7 @@ private fun SidebarRoot(
     // mapping inside it would never see new tier/screen/mode values.
     val isPrivate by components.appStore.observeAsComposableState { it.mode.isPrivate }
     // Only what the Sidebar shows: a loading page's progress, security and history leave this
-    // unchanged, so they don't rebuild the Sidebar (spec 0009). The address bar follows the page alone.
+    // unchanged, so they don't rebuild the Sidebar. The address bar follows the page alone.
     val browserState by components.core.store.observeAsComposableState { it.sidebarView() }
     val selectedPage by components.core.store.observeAsComposableState { it.selectedPageView() }
     val chosenMode by modeStore.chosenMode.collectAsState()
@@ -265,8 +276,18 @@ private fun SidebarRoot(
     val inactiveExpanded by modeStore.inactiveExpanded.collectAsState()
     val flapEnabled by modeStore.flapEnabled.collectAsState()
     val flapPosition by modeStore.flapPosition.collectAsState()
-    val essentialsShare by modeStore.essentialsShare.collectAsState()
-    val pinnedShare by modeStore.pinnedShare.collectAsState()
+    val controlPlaces = modeStore.collectControlPlaces()
+    // Arrange Mode: on until Done, leaving Collapsed Mode, or the app going to the background.
+    var arranging by remember { mutableStateOf(false) }
+    val landscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    // The handler outlives rotations (the activity handles them), so it reads the orientation of the moment.
+    val currentLandscape by rememberUpdatedState(landscape)
+    val arranged = modeStore.collectArrangedShares(landscape)
+    DisposableEffect(activity) {
+        val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_STOP) arranging = false }
+        activity.lifecycle.addObserver(observer)
+        onDispose { activity.lifecycle.removeObserver(observer) }
+    }
     val addressBarLayout by modeStore.addressBarLayout.collectAsState()
     val essentials = remember(activity) { Essentials(PreferencesEssentialsRepository.get(activity), Essentials.processLinks) }
     val essentialList by essentials.essentials.collectAsState()
@@ -322,6 +343,9 @@ private fun SidebarRoot(
     val tabRows by modeStore.tabRows.collectAsState()
     val closeButtons by modeStore.closeButtons.collectAsState()
     val swipeToClose by modeStore.swipeToClose.collectAsState()
+    val addressSwipeNewTab by modeStore.addressSwipeNewTab.collectAsState()
+    val tabListDirection by modeStore.tabListDirection.collectAsState()
+    val addressSwipeTabs by modeStore.addressSwipeTabs.collectAsState()
     val essentialsPerRow by modeStore.essentialsPerRow.collectAsState()
     val haptics by modeStore.haptics.collectAsState()
     val animations by modeStore.animations.collectAsState()
@@ -378,7 +402,9 @@ private fun SidebarRoot(
                 maxActiveTime = maxActiveTime,
                 flapEnabled = flapEnabled,
                 flapPosition = flapPosition,
-                sectionShares = SectionShares(essentialsShare, pinnedShare),
+                controlPlaces = controlPlaces,
+                arranging = arranging,
+                arranged = arranged,
                 spaces = spaces.data,
                 addressBarLayout = addressBarLayout,
                 sidebarWidth = sidebarWidthChoice,
@@ -394,6 +420,9 @@ private fun SidebarRoot(
                         tabRows = tabRows,
                         closeButtons = closeButtons,
                         swipeToClose = swipeToClose,
+                        tabListDirection = tabListDirection,
+                        addressSwipeNewTab = addressSwipeNewTab,
+                        addressSwipeTabs = addressSwipeTabs,
                         essentialsPerRow = essentialsPerRow,
                         haptics = haptics,
                         animations = animations,
@@ -431,6 +460,12 @@ private fun SidebarRoot(
     val density = LocalDensity.current
     // The Search Pop-up, when open (from the Sidebar Address Bar or New Tab).
     var searchRequest by remember { mutableStateOf<pt.dweep.sideraven.ui.SearchRequest?>(null) }
+    // A new tab handed over for the Search Pop-up (SearchHandoff), possibly from before a mode switch's restart.
+    LaunchedEffect(activity, isPrivate) {
+        SearchHandoff.pending.collect { wanted ->
+            if (wanted == isPrivate && SearchHandoff.take(isPrivate)) searchRequest = searchRequestFor(activity, newTab = true, fromHome = true)
+        }
+    }
 
     val currentScreen by rememberUpdatedState(screen)
     val handler =
@@ -438,6 +473,7 @@ private fun SidebarRoot(
             SidebarIntentHandler(
                 selectTab = { tabId -> components.useCases.tabsUseCases.selectTab(tabId) },
                 openNewTab = { private -> openNewTab(activity, private) },
+                openSpaceHome = { openNewTab(activity, private = false, focus = false) },
                 closeTab = { tabId -> components.useCases.tabsUseCases.removeTab(tabId) },
                 onTabClosed = { private, wasLastTab ->
                     activity.lifecycleScope.allowUndo(
@@ -474,7 +510,7 @@ private fun SidebarRoot(
                 },
                 openEssential = { url, private ->
                     val tabId = components.useCases.tabsUseCases.addTab(url = url, selectTab = true, private = private)
-                    // Private tabs never become Essential Tabs (ADR 0005); they stay in the private Tab List.
+                    // Private tabs never become Essential Tabs; they stay in the private Tab List.
                     if (!private) essentials.link(url, tabId)
                 },
                 unpinEssential = essentials::unpin,
@@ -487,7 +523,8 @@ private fun SidebarRoot(
                 setInactiveExpanded = modeStore.inactiveExpanded::set,
                 setDesktopTabsExpanded = modeStore.desktopTabsExpanded::set,
                 setFlapPosition = modeStore.flapPosition::set,
-                setSectionShare = { section, share -> modeStore.sectionShare(section).set(share) },
+                setArranging = { arranging = it },
+                setArrangedShare = { section, share -> modeStore.arrange(section, currentLandscape, share) },
                 openUrl = { url -> components.useCases.tabsUseCases.addTab(url = url, selectTab = true) },
                 // Fenix's home screen doesn't follow the selected tab: leave it for the browser.
                 showBrowser = {
@@ -507,6 +544,7 @@ private fun SidebarRoot(
                         showHistory = { navController(activity)?.navigate(NavGraphDirections.actionGlobalTabHistoryDialogFragment(activeSessionId = null)) },
                         openMenu = { onHome -> SidebarPageActions.openMenu(activity, onHome) },
                         openSitePanel = { SidebarPageActions.openSitePanel(activity) },
+                        openSyncedTabs = { SidebarPageActions.openSyncedTabs(activity) },
                         openBlank = { private ->
                             components.useCases.tabsUseCases.addTab(url = "about:blank", selectTab = true, private = private)
                             navController(activity)?.let { if (it.currentDestination?.id != R.id.browserFragment) it.navigate(R.id.browserFragment) }
@@ -591,23 +629,65 @@ private fun SidebarRoot(
     LaunchedEffect(handler) {
         SidebarKeyboard.shortcuts.collect { intent -> handler.handle(intent, currentState) }
     }
+    // This window's Main Menu: it learns what the Sidebar offers, and its Sideraven entries come back here.
+    val menuLink = remember(activity) { SidebarMenu.of(activity) }
+    val menuInfo =
+        if (state.isVisible) {
+            SidebarMenuInfo(
+                nextMode = state.nextMode,
+                layoutMovable = state.layoutMovable,
+                chosenLayout = state.chosenLayout,
+                mode = state.mode,
+                arrangeable = state.essentials.isNotEmpty() || state.pinned.isNotEmpty() || state.folders.isNotEmpty(),
+            )
+        } else {
+            null
+        }
+    // Leaving Collapsed Mode ends Arrange Mode, so it doesn't come back on its own later.
+    LaunchedEffect(state.mode) { if (state.mode != SidebarMode.Collapsed) arranging = false }
+    SideEffect { menuLink?.publish(menuInfo) }
+    DisposableEffect(menuLink) { onDispose { menuLink?.publish(null) } }
+    LaunchedEffect(handler, menuLink) {
+        menuLink?.requests?.collect { intent -> handler.handle(intent, currentState) }
+    }
 
     val chosenAccent by modeStore.accent.collectAsState()
-    SideravenTheme(isPrivate = state.isPrivate, spaceAccent = pt.dweep.sideraven.theme.effectiveAccent(state.currentSpace?.accent, chosenAccent)) {
-        // Framed content: the frame shares the Sidebar's surface colour while the Sidebar is shown
+    val spaceThemes by modeStore.spaceThemes.collectAsState()
+    val pureBlack by modeStore.pureBlack.collectAsState()
+    val dark = androidx.compose.foundation.isSystemInDarkTheme()
+    SideravenTheme(isPrivate = state.isPrivate, spaceAccent = pt.dweep.sideraven.theme.effectiveAccent(state.currentSpace?.accent, chosenAccent), pureBlack = pureBlack) {
+        // Space themes: the current Space's Zen gradient, or its accent, tints the frame. Not in Private
+        // Mode (Fenix's private colours), nor with pure black, which keeps the frame black.
+        val surface = MaterialTheme.colorScheme.surface
+        val accent = MaterialTheme.colorScheme.primary
+        val currentSpace = spacesData?.current
+        val gradient =
+            remember(currentSpace, zenSettings.shareColours) {
+                currentSpace?.let { pt.dweep.sideraven.sync.ZenColours.gradientOf(it, zenSettings.shareColours) }.orEmpty()
+                    .mapNotNull { hex -> runCatching { androidx.compose.ui.graphics.Color(android.graphics.Color.parseColor(hex)) }.getOrNull() }
+            }
+        val tint =
+            if (spaceThemes && !state.isPrivate && !(pureBlack && dark) && currentSpace != null) {
+                pt.dweep.sideraven.theme.SpaceThemes.tint(surface, accent, gradient, dark)
+            } else {
+                null
+            }
+        // Framed content: the frame shares the Sidebar's colours while the Sidebar is shown
         // (unless Rounded frame is off: then content sits right against the Sidebar).
-        val frameColor = MaterialTheme.colorScheme.surface.toArgb()
-        LaunchedEffect(state.framesContent, frameColor) { onFrameChanged(state.framesContent, frameColor) }
-        // Fenix's toolbar takes the Sidebar's colour while the Sidebar shows.
-        LaunchedEffect(state.isVisible, frameColor) { SidebarGate.sidebarSurface.value = frameColor.takeIf { state.isVisible } }
+        val frameTop = (tint?.top ?: surface).toArgb()
+        val frameBottom = (tint?.bottom ?: surface).toArgb()
+        LaunchedEffect(state.framesContent, frameTop, frameBottom) { onFrameChanged(state.framesContent, frameTop, frameBottom) }
+        // Fenix's toolbar takes the Sidebar's colour while the Sidebar shows (the top of a Space theme's gradient).
+        LaunchedEffect(state.isVisible, frameTop) { SidebarGate.sidebarSurface.value = frameTop.takeIf { state.isVisible } }
         CompositionLocalProvider(
+            pt.dweep.sideraven.theme.LocalFrameTint provides tint,
             LocalFaviconLoader provides { url, size -> Favicon(url = url, size = size, isPrivate = state.isPrivate) },
         ) {
-        // Fenix's toolbar address, tapped, opens the pop-up over the toolbar (spec 0006).
+        // Fenix's toolbar address, tapped, opens the pop-up over the toolbar.
         // An opened tab is awake again.
         val selectedForWake = components.core.store.observeAsComposableState { it.selectedTabId }.value
         LaunchedEffect(selectedForWake) { selectedForWake?.let { SidebarGate.sleepingTabs.value -= it } }
-        // Fenix's New tab opens the way New Tab Behaviour says, as the Sidebar's + does (spec 0006).
+        // Fenix's New tab opens the way New Tab Behaviour says, as the Sidebar's + does.
         val currentState by rememberUpdatedState(state)
         LaunchedEffect(activity) {
             ToolbarSearch.requests.collect { request ->
@@ -738,14 +818,21 @@ private fun switchBrowsingMode(
 private fun openNewTab(
     activity: HomeActivity,
     private: Boolean,
+    // Whether to start typing, as Fenix does for a new tab; not for an empty Space's home page.
+    focus: Boolean = true,
 ) {
     val settings = activity.components.settings
     if (settings.enableHomepageAsNewTab) {
         activity.components.useCases.fenixBrowserUseCases.addNewHomepageTab(private = private)
     } else {
-        navController(activity)?.navigate(
-            NavGraphDirections.actionGlobalHome(focusOnAddressBar = !settings.enableHomepageTrendingRecentSearch),
-        )
+        // In the Sidebar layout Fenix's toolbar is hidden: the Search Pop-up opens instead of a keyboard for it.
+        val focus =
+            SearchHandoff.focusFenixAddressBar(
+                wants = focus && !settings.enableHomepageTrendingRecentSearch,
+                toolbarHidden = SidebarGate.toolbarHidden.value,
+                private = private,
+            )
+        navController(activity)?.navigate(NavGraphDirections.actionGlobalHome(focusOnAddressBar = focus))
     }
 }
 
@@ -777,7 +864,7 @@ private fun searchRequestFor(
 internal fun sidebarNavController(activity: HomeActivity): NavController? =
     (activity.supportFragmentManager.findFragmentById(R.id.container) as? NavHostFragment)?.navController
 
-/** Unload (CONTEXT.md): the tabs sleep (their engine sessions are suspended); they reload when opened. */
+/** Unload: the tabs sleep (their engine sessions are suspended); they reload when opened. */
 private fun sleepTabs(
     activity: HomeActivity,
     tabIds: List<String>,
@@ -787,7 +874,7 @@ private fun sleepTabs(
 }
 
 /**
- * Icons for Sidebar items by address (spec 0008): the last real icon known on this device
+ * Icons for Sidebar items by address: the last real icon known on this device
  * (open tabs, earlier loads, desktop's from Zen Sync), else Fenix's loader, whose generated
  * letter icons are never kept as real ones.
  */

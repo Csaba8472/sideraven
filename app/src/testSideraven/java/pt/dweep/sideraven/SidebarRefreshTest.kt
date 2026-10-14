@@ -16,7 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spec 0007 ticket 01: every input of the Sidebar's state shows at once. */
+/** Every input of the Sidebar's state shows at once. */
 @RunWith(AndroidJUnit4::class)
 class SidebarRefreshTest {
     @get:Rule

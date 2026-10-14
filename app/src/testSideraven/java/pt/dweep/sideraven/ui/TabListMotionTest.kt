@@ -24,7 +24,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0008 ticket 08 (audit 3): the Tab List follows the Animations setting. */
+/** The Tab List follows the Animations setting. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class TabListMotionTest {

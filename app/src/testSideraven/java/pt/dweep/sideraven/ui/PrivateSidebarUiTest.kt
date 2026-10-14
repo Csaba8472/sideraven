@@ -16,7 +16,7 @@ import pt.dweep.sideraven.SidebarIntent
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 13, seam 2: the Browsing Mode Switch. */
+/** The Browsing Mode Switch. */
 @RunWith(AndroidJUnit4::class)
 class PrivateSidebarUiTest {
     @get:Rule

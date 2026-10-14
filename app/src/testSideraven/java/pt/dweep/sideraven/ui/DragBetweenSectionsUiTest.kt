@@ -23,7 +23,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 12, seam 2: drags between the Tab List, the Essentials Section and the Inactive Tabs Section. */
+/** Drags between the Tab List, the Essentials Section and the Inactive Tabs Section. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class DragBetweenSectionsUiTest {

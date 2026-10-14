@@ -13,7 +13,7 @@ import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.Store
 
 /**
- * Keeps every normal tab in a Space (CONTEXT.md, "Space").
+ * Keeps every normal tab in a Space.
  *
  * - A new tab joins its parent's Space, else the current Space.
  * - Restored tabs keep their Space (tab ids survive restarts and undo); any without one join the

@@ -274,7 +274,7 @@ class DefaultTabManagerController(
      * @param isPrivate [Boolean] indicating whether the new tab is private.
      */
     private fun openNewTab(isPrivate: Boolean) {
-        // SIDERAVEN-HOOK: New Tab Behaviour where a Sidebar exists (spec 0006)
+        // SIDERAVEN-HOOK: New Tab Behaviour where a Sidebar exists
         if (pt.dweep.sideraven.ToolbarSearch.openNewTab(context, isPrivate)) {
             navController.popBackStack()
             return

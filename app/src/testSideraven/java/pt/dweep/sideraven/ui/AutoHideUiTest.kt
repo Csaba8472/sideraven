@@ -23,7 +23,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 06, seam 2: the Auto-Hide overlay. */
+/** The Auto-Hide overlay. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class AutoHideUiTest {

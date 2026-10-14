@@ -25,7 +25,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 05: "Move to space" in the Tab Context Menu. */
+/** "Move to space" in the Tab Context Menu. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class MoveToSpaceUiTest {

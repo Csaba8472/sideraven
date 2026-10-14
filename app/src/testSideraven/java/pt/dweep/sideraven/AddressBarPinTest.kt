@@ -26,7 +26,7 @@ import pt.dweep.sideraven.theme.SideravenTheme
 import pt.dweep.sideraven.ui.SidebarContent
 import pt.dweep.sideraven.ui.SidebarTestTag
 
-/** Sidebar Address Bar ticket 02: Reset and Close for Essential Tabs and Pinned Tabs. */
+/** Reset and Close for Essential Tabs and Pinned Tabs. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class AddressBarPinTest {

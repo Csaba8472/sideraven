@@ -22,7 +22,7 @@ import pt.dweep.sideraven.NewTabPositionMiddleware
 import pt.dweep.sideraven.Spaces
 import pt.dweep.sideraven.SpacesMiddleware
 
-/** Zen Sync ticket 06: First Sync's Replace and Merge choices. */
+/** First Sync's Replace and Merge choices. */
 @RunWith(AndroidJUnit4::class)
 class FirstSyncReplaceMergeTest {
     private val server = FakeSyncServer()

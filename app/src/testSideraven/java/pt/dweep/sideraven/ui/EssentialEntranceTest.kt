@@ -24,7 +24,7 @@ import pt.dweep.sideraven.SidebarMode
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0008 ticket 07 (audit 2): only a newly pinned Essential plays its entrance. */
+/** Only a newly pinned Essential plays its entrance. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class EssentialEntranceTest {

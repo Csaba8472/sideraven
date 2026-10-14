@@ -9,7 +9,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Ticket 08: when the Swipe Zone reclaims part of the left edge. */
+/** When the Swipe Zone reclaims part of the left edge. */
 class SwipeZoneTest {
     private fun state(
         mode: SidebarMode,

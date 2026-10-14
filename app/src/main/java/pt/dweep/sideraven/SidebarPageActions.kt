@@ -4,6 +4,7 @@
 
 package pt.dweep.sideraven
 
+import android.app.Activity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import mozilla.components.support.ktx.kotlin.isContentUrl
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.components.menu.MenuAccessPoint
+import org.mozilla.fenix.tabstray.redux.state.Page
 import org.mozilla.fenix.ext.components
 
 /**
@@ -29,6 +31,12 @@ object SidebarPageActions {
         sidebarNavController(activity)?.navigate(
             NavGraphDirections.actionGlobalMenuDialogFragment(accesspoint = if (onHome) MenuAccessPoint.Home else MenuAccessPoint.Browser),
         )
+    }
+
+    /** Fenix's synced-tabs page: the Tab Tray on the tabs open on the user's other devices. */
+    fun openSyncedTabs(activity: Activity) {
+        val home = activity as? HomeActivity ?: return
+        sidebarNavController(home)?.navigate(NavGraphDirections.actionGlobalTabManagementFragment(page = Page.SyncedTabs))
     }
 
     /** Fenix's site panel (permissions, trackers blocked, certificate) for the selected tab. */

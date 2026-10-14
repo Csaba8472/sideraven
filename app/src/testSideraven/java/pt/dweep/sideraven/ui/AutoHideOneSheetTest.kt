@@ -24,7 +24,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0008 ticket 06 (audit 1): the Auto-Hide Sidebar is kept, not rebuilt, between reveals. */
+/** The Auto-Hide Sidebar is kept, not rebuilt, between reveals. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class AutoHideOneSheetTest {

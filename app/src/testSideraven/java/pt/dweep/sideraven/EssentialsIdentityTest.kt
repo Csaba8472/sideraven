@@ -12,7 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Spaces ticket 01: Essentials have a stable identity, custom name and preserved extra data. */
+/** Essentials have a stable identity, custom name and preserved extra data. */
 @RunWith(AndroidJUnit4::class)
 class EssentialsIdentityTest {
     @Test

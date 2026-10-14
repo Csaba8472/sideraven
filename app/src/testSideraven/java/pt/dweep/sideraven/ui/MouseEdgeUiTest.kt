@@ -21,7 +21,7 @@ import pt.dweep.sideraven.SidebarMode
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Ticket 16, seam 2: the mouse edge reveal. */
+/** The mouse edge reveal. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class MouseEdgeUiTest {

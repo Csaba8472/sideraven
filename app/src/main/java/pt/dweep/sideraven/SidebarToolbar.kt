@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import android.app.Activity
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -26,7 +27,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 
 /**
- * Fenix's toolbar in the Sidebar layout (CONTEXT.md, "Address Bar Layout"): hidden while
+ * Fenix's toolbar in the Sidebar layout: hidden while
  * [SidebarGate.toolbarHidden] says so. The browser and home screens each call in from one
  * `SIDERAVEN-HOOK`.
  */
@@ -35,7 +36,7 @@ object SidebarToolbar {
      * Browser screen: hide the toolbar with [hide] (Fenix's own full-screen expansion) when the
      * Sidebar layout takes effect, and bring it back with [show] when it ends. Changes only. In full
      * screen the change is only recorded: leaving full screen runs Fenix's own collapse, which
-     * follows the gate.
+     * follows the gate. Another app's tab keeps its toolbar ([SidebarGate.hostsSidebar]).
      */
     fun observe(
         fragment: Fragment,
@@ -44,6 +45,7 @@ object SidebarToolbar {
         show: () -> Unit,
         toolbars: () -> List<View> = { emptyList() },
     ) {
+        if (!SidebarGate.hostsSidebar(fragment.activity)) return
         val owner = fragment.viewLifecycleOwner
         val follower = ToolbarFollower(isFullScreen, hide, show)
         owner.lifecycleScope.launch {
@@ -108,8 +110,8 @@ object SidebarToolbar {
         }
     }
 
-    /** Whether the toolbar must stay hidden (for Fenix's own paths that would show it again). */
-    fun isHidden(): Boolean = SidebarGate.toolbarHidden.value
+    /** Whether [activity]'s toolbar must stay hidden (for Fenix's own paths that would show it again). */
+    fun isHidden(activity: Activity?): Boolean = SidebarGate.hostsSidebar(activity) && SidebarGate.toolbarHidden.value
 
     /** Home screen: the toolbar's content, left out while the Sidebar layout is in effect. */
     @Composable

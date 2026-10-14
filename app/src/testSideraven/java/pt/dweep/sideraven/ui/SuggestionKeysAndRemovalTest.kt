@@ -29,7 +29,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0006 ticket 06: removing a history suggestion, and moving through suggestions with the keyboard. */
+/** Removing a history suggestion, and moving through suggestions with the keyboard. */
 @OptIn(ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")

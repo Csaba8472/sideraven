@@ -16,7 +16,7 @@ import pt.dweep.sideraven.newPinId
 /** How a sync went: fully, or read-only because desktop's data is a newer version. */
 enum class SyncOutcome { Synced, ReadOnly }
 
-/** The First Sync choices (CONTEXT.md, "First Sync"). */
+/** The First Sync choices. */
 enum class FirstSyncChoice { KeepSeparate, Replace, Merge }
 
 /**
@@ -272,7 +272,7 @@ class ZenSync(
     }
 
     /**
-     * Moves favicons stored inline before spec 0009 out of the stored items into [ZenBlobs]. Not an
+     * Moves favicons stored inline by earlier versions out of the stored items into [ZenBlobs]. Not an
      * edit: nothing is stamped, and what Zen receives is unchanged.
      */
     private fun slimStoredItems() {

@@ -26,7 +26,7 @@ import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.Spaces
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 14: Collapsed Mode's Folder popup, and Folder reordering. */
+/** Collapsed Mode's Folder popup, and Folder reordering. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class FolderPopupUiTest {

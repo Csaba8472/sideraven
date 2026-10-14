@@ -18,7 +18,7 @@ jobs:
   release:
     timeout-minutes: 300
     name: Build, sign and publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Signing secrets are set
         env:
@@ -111,9 +111,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # The version's changelog (docs/changelog/<version>.md), when there is one, goes between the two lines.
           {
             echo "Sideraven $VERSION, based on Firefox for Android $FENIX_VERSION."
             echo
+            if [ -f "docs/changelog/$VERSION.md" ]; then
+              cat "docs/changelog/$VERSION.md"
+              echo
+            fi
             echo "Download \`sideraven-$VERSION-arm64-v8a.apk\` for most devices, or \`armeabi-v7a\` for older 32-bit ones."
           } > notes.md
           gh release create "$GITHUB_REF_NAME" dist/*.apk --title "Sideraven $VERSION" --notes-file notes.md

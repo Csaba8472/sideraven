@@ -24,7 +24,7 @@ import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0008 ticket 12 (audit 7): the Auto-Hide Sidebar follows the finger. */
+/** The Auto-Hide Sidebar follows the finger. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class AutoHideGesturesTest {

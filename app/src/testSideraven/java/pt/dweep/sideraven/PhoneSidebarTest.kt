@@ -12,7 +12,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Polish round 2 ticket 08: phones get the Auto-Hide Sidebar, on by default, with a way back to Fenix's tab tray. */
+/** Phones get the Auto-Hide Sidebar, on by default, with a way back to Fenix's tab tray. */
 class PhoneSidebarTest {
     private val store = InMemorySidebarModeStore()
 
@@ -33,12 +33,15 @@ class PhoneSidebarTest {
     }
 
     @Test
-    fun `GIVEN the Phone tier THEN Auto-Hide is the only mode, whatever was chosen, and there's nothing to toggle`() {
-        assertEquals(listOf(SidebarMode.AutoHide), SidebarMode.available(SidebarTier.Phone))
+    fun `GIVEN the Phone tier THEN Collapsed and Auto-Hide are offered, Auto-Hide first, and the Toggle switches between them`() {
+        assertEquals(listOf(SidebarMode.Collapsed, SidebarMode.AutoHide), SidebarMode.available(SidebarTier.Phone))
+        // First launch: Auto-Hide, so pages keep the whole screen until the user chooses otherwise.
         assertEquals(SidebarMode.AutoHide, SidebarMode.effective(null, SidebarTier.Phone))
-        assertEquals(SidebarMode.AutoHide, SidebarMode.effective(SidebarMode.Persistent, SidebarTier.Phone))
-        assertEquals(SidebarMode.AutoHide, SidebarMode.effective(SidebarMode.Collapsed, SidebarTier.Phone))
-        assertNull(SidebarMode.next(SidebarMode.AutoHide, SidebarTier.Phone))
+        // One stored choice for every tier: Collapsed carries across rotation; Persistent shows as Collapsed.
+        assertEquals(SidebarMode.Collapsed, SidebarMode.effective(SidebarMode.Collapsed, SidebarTier.Phone))
+        assertEquals(SidebarMode.Collapsed, SidebarMode.effective(SidebarMode.Persistent, SidebarTier.Phone))
+        assertEquals(SidebarMode.Collapsed, SidebarMode.next(SidebarMode.AutoHide, SidebarTier.Phone))
+        assertEquals(SidebarMode.AutoHide, SidebarMode.next(SidebarMode.Collapsed, SidebarTier.Phone))
         // A large phone still falls back to Collapsed.
         assertEquals(SidebarMode.Collapsed, SidebarMode.effective(SidebarMode.Persistent, SidebarTier.LargePhone))
     }
@@ -52,8 +55,28 @@ class PhoneSidebarTest {
         assertTrue(ui.isVisible)
         assertEquals(SidebarMode.AutoHide, ui.mode)
         assertTrue(ui.showsFlap)
-        assertNull(ui.nextMode)
+        assertEquals(SidebarMode.Collapsed, ui.nextMode)
         assertTrue(SidebarGate.showsSidebar(SidebarTier.Phone))
         assertFalse(SidebarGate.showsTabCounter(SidebarTier.Phone, null, flapEnabled = true))
+    }
+
+    @Test
+    fun `GIVEN Collapsed on a phone THEN it behaves as Collapsed anywhere - Fenix's toolbar, no handle, no edge swipe`() {
+        val ui =
+            BrowserState(tabs = listOf(createTab("https://a.example", id = "a")), selectedTabId = "a")
+                .toSidebarUiState(
+                    isPrivate = false,
+                    tier = SidebarTier.Phone,
+                    screen = SidebarScreen.Browser,
+                    chosenMode = SidebarMode.Collapsed,
+                    swipeZoneEnabled = true,
+                    addressBarLayout = AddressBarLayout.Sidebar,
+                )
+
+        assertEquals(SidebarMode.Collapsed, ui.mode)
+        assertFalse(ui.showsFlap)
+        assertFalse(ui.showsSwipeZone)
+        assertEquals(AddressBarLayout.Top, ui.layout)
+        assertFalse(SidebarGate.showsTabCounter(SidebarTier.Phone, SidebarMode.Collapsed, flapEnabled = false))
     }
 }

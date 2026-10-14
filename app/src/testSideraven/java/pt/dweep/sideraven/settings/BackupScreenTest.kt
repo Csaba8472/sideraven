@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 import pt.dweep.sideraven.SidebarTier
 import java.time.LocalDate
 
-/** v1 prep ticket 01: Sideraven Settings has a Backup screen with export and import. */
+/** Sideraven Settings has a Backup screen with export and import. */
 @RunWith(AndroidJUnit4::class)
 class BackupScreenTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()

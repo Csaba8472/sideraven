@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spec 0007 ticket 14: Fenix's one-time question about search suggestions in private browsing. */
+/** Fenix's one-time question about search suggestions in private browsing. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class PrivateSuggestionsPromptTest {

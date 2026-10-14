@@ -11,7 +11,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-/** Ticket 03: every new tab lands at the top of the Tab List. Real store, real reducer. */
+/** Every new tab lands at the top of the Tab List. Real store, real reducer. */
 class NewTabsOnTopTest {
     private lateinit var store: BrowserStore
 

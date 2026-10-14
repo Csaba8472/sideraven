@@ -4,6 +4,10 @@
 
 package pt.dweep.sideraven.ui
 
+import pt.dweep.sideraven.theme.SidebarFill
+import pt.dweep.sideraven.theme.sidebarFill
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalConfiguration
@@ -11,6 +15,8 @@ import androidx.compose.ui.semantics.heading
 import kotlinx.coroutines.CoroutineStart
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.unit.IntOffset
 import kotlin.math.round
@@ -137,6 +143,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -148,7 +155,11 @@ import org.mozilla.fenix.tabstray.browser.compose.createListReorderState
 import pt.dweep.sideraven.ESSENTIALS_CAP
 import pt.dweep.sideraven.PinResult
 import pt.dweep.sideraven.SidebarIntent
+import pt.dweep.sideraven.ArrangedShares
 import pt.dweep.sideraven.CollapsedSection
+import pt.dweep.sideraven.MAX_ARRANGED_SHARE
+import pt.dweep.sideraven.SectionSizing
+import pt.dweep.sideraven.SidebarControlKind
 import pt.dweep.sideraven.SidebarMode
 import pt.dweep.sideraven.SidebarTab
 import pt.dweep.sideraven.SidebarDesktopTabs
@@ -157,9 +168,11 @@ import pt.dweep.sideraven.CloseButtons
 import pt.dweep.sideraven.SidebarInactiveSection
 import pt.dweep.sideraven.SidebarSide
 import pt.dweep.sideraven.SidebarUiState
+import pt.dweep.sideraven.TabListDirection
 import pt.dweep.sideraven.SidebarWidth
 import pt.dweep.sideraven.TabAudio
 import pt.dweep.sideraven.theme.SideravenMotion
+import pt.dweep.sideraven.theme.frameBackground
 import mozilla.components.ui.icons.R as iconsR
 
 /** Persistent Mode width at the Standard setting. */
@@ -439,7 +452,10 @@ object SidebarTestTag {
     const val ADDRESS_MENU = "sidebar.addressMenu"
     const val ADDRESS_SITE_INFO = "sidebar.addressSiteInfo"
     const val ADDRESS_CLOSE = "sidebar.addressClose"
-    const val SECTION_DIVIDER = "sidebar.sectionDivider"
+    const val SYNCED_TABS = "sidebar.syncedTabs"
+    const val GRAB_BAR = "sidebar.grabBar"
+    const val ARRANGE_DONE = "sidebar.arrangeDone"
+    const val ARRANGE_RESET = "sidebar.arrangeReset"
     const val SEARCH_POPUP = "sidebar.searchPopup"
     const val SEARCH_FIELD = "sidebar.searchField"
     const val SEARCH_OPEN_HOME = "sidebar.searchOpenHome"
@@ -672,7 +688,7 @@ private fun AutoHideOverlay(
     val density = LocalDensity.current
     val panelWidthPx = with(density) { trayWidth.toPx() }
     val overshootPx = with(density) { SideravenMotion.TRAY_OVERSHOOT_DP.dp.toPx() }
-    val trayColor = MaterialTheme.colorScheme.surface
+    val trayColor = pt.dweep.sideraven.theme.LocalFrameTint.current?.middle ?: MaterialTheme.colorScheme.surface
     // Offsets below are inward-positive; [dir] turns them into screen directions.
     val dir = LocalSidebarSide.current.dir
     val offset = tray.offset
@@ -802,7 +818,7 @@ private fun AutoHideOverlay(
     }
 }
 
-/** Swipe Zone height: Android lets an app reclaim at most 200dp of each edge (ADR 0004). */
+/** Swipe Zone height: Android lets an app reclaim at most 200dp of each edge. */
 val SwipeZoneHeight = 200.dp
 
 /** Swipe Zone width: covers the system back gesture's edge area. */
@@ -893,7 +909,7 @@ private val FlapTouchWidth = 32.dp
 private val FlapTouchHeight = 96.dp
 
 /**
- * The Sidebar Flap (CONTEXT.md): the Auto-Hide tray's handle. Hidden, it sits at the edge; it comes
+ * The Sidebar Flap: the Auto-Hide tray's handle. Hidden, it sits at the edge; it comes
  * out with the Sidebar, fixed to its outer edge. Tap it to open or close the Sidebar, drag it to pull
  * the Sidebar out or push it back, or hold it and drag along the edge to move it.
  */
@@ -967,7 +983,7 @@ private fun BoxScope.SidebarFlap(
                     .size(FlapVisualWidth, FlapVisualHeight)
                     .clip(RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp))
                     // The Sidebar's own colour: the handle reads as part of the tray.
-                    .background(colors.surface),
+                    .background(pt.dweep.sideraven.theme.LocalFrameTint.current?.middle ?: colors.surface),
             contentAlignment = Alignment.Center,
         ) {
             // A short grip line, brighter while held.
@@ -1121,7 +1137,7 @@ internal class RevealPull {
 }
 
 /**
- * Drags from the edge pull the hidden Sidebar out with the finger (spec 0008). Let go past a third
+ * Drags from the edge pull the hidden Sidebar out with the finger. Let go past a third
  * of its width, or with an inward fling, it opens; otherwise it settles back.
  */
 private fun Modifier.pullToReveal(
@@ -1206,7 +1222,7 @@ private fun SidebarPanel(
         modifier =
             modifier
                 .fillMaxHeight()
-                .background(MaterialTheme.colorScheme.surface),
+                .frameBackground(),
     ) {
     val panelHeight = maxHeight
     val drag = remember { SidebarDragState() }
@@ -1251,10 +1267,83 @@ private fun SidebarPanel(
                 ?.key
         }
         val haptics = LocalHapticFeedback.current
-        // Collapsed Mode: hold a Divider and drag it to show more or less of the section above it.
-        val resizable = !showLabels
-        val essentialsResizer = rememberSectionResizer(CollapsedSection.Essentials, state.sectionShares, panelHeight, onIntent) { drag.essentialsSection.height }
-        val pinnedResizer = rememberSectionResizer(CollapsedSection.Pinned, state.sectionShares, panelHeight, onIntent) { drag.pinnedSection.height }
+        // Section Sizing (Collapsed Mode): the Tab List keeps its share of the strip; Essentials and
+        // Pinned Tabs share the rest, each taking what it holds (its scroll's viewport plus what's past it).
+        val essentialsScroll = rememberScrollState()
+        val pinnedScroll = rememberScrollState()
+        val density = LocalDensity.current
+        val sharedHeight = drag.essentialsSection.height + drag.pinnedSection.height + drag.tabList.height
+        // Arrange Mode: while a grab bar is dragged its size shows live; otherwise the remembered sizes.
+        var draggedShares by remember { mutableStateOf<ArrangedShares?>(null) }
+        var dragging by remember { mutableStateOf(false) }
+        var lettingGo by remember { mutableIntStateOf(0) }
+        LaunchedEffect(state.arranged) { if (!dragging) draggedShares = null }
+        LaunchedEffect(lettingGo) {
+            if (lettingGo == 0) return@LaunchedEffect
+            // By then the stored size has reached the state (or was already the same).
+            withFrameNanos {}
+            withFrameNanos {}
+            if (!dragging) draggedShares = null
+        }
+        val arrangeIntent: (SidebarIntent) -> Unit = { intent ->
+            if (intent == SidebarIntent.ResetArrangement) draggedShares = null
+            onIntent(intent)
+        }
+        val arranged = draggedShares ?: state.arranged
+        val sectionMax =
+            if (showLabels) {
+                null
+            } else {
+                val essentialsHeld = contentHeight(essentialsScroll, state.essentials.isNotEmpty())
+                val pinnedHeld = contentHeight(pinnedScroll, state.pinned.isNotEmpty() || state.folders.isNotEmpty())
+                if (sharedHeight > 0f && essentialsHeld != null && pinnedHeld != null) {
+                    SectionSizing.maxHeights(
+                        sharedHeight,
+                        essentialsHeld,
+                        pinnedHeld,
+                        arrangedEssentials = arranged.essentials?.times(sharedHeight),
+                        arrangedPinned = arranged.pinned?.times(sharedHeight),
+                    )
+                } else {
+                    null
+                }
+            }
+        // A grab bar in Arrange Mode: drags its section's height, live, and remembers it when let go.
+        @Composable
+        fun ArrangeBar(
+            section: CollapsedSection,
+            label: String,
+        ) {
+            val own = if (section == CollapsedSection.Essentials) drag.essentialsSection else drag.pinnedSection
+            val other = if (section == CollapsedSection.Essentials) drag.pinnedSection else drag.essentialsSection
+            val scroll = if (section == CollapsedSection.Essentials) essentialsScroll else pinnedScroll
+            // As far as the Tab List and the other section allow, and no further than the section holds. A plain
+            // value, so the remembered lambdas below pick up each frame's (a function reference wouldn't).
+            val limit = minOf(sharedHeight * MAX_ARRANGED_SHARE - other.height, contentHeight(scroll, shown = true) ?: Float.MAX_VALUE)
+            GrabBar(
+                label = label,
+                height = { own.height },
+                room = { limit },
+                onDragging = { px ->
+                    if (sharedHeight > 0f) {
+                        dragging = true
+                        draggedShares = (draggedShares ?: state.arranged).with(section, px / sharedHeight)
+                    }
+                },
+                onLetGo = {
+                    dragging = false
+                    draggedShares?.get(section)?.let { onIntent(SidebarIntent.ArrangeSection(section, it)) }
+                    lettingGo++
+                },
+                onStep = { by ->
+                    if (sharedHeight > 0f) {
+                        onIntent(SidebarIntent.ArrangeSection(section, (own.height + by * sharedHeight).coerceIn(0f, limit.coerceAtLeast(0f)) / sharedHeight))
+                    }
+                },
+            )
+        }
+        // Until everything is measured: a share each that still leaves the Tab List its own.
+        fun maxHeightDp(px: Float?) = px?.let { with(density) { it.toDp() } } ?: (panelHeight * ((1f - SectionSizing.TAB_LIST_SHARE) / 2f))
         // An empty section takes no room; during a drag the drag layer draws its target instead.
         val essentialsShown = state.essentials.isNotEmpty()
         // Above the section, so a newly pinned Essential is known across mode and layout changes.
@@ -1263,23 +1352,23 @@ private fun SidebarPanel(
         if (essentialsShown) {
             Box(
                 Modifier
-                    .animateHeight(
-                        if (essentialsResizer.resizing) snap() else LocalSidebarMotion.current.move(SideravenMotion.MODE_CHANGE_MS, SideravenMotion.EaseInOutStrong),
-                    )
-                    .onGloballyPositioned { drag.essentialsSection = it.boundsInRoot() },
+                    .animateHeight(if (dragging) snap() else LocalSidebarMotion.current.move(SideravenMotion.MODE_CHANGE_MS, SideravenMotion.EaseInOutStrong))
+                    .onGloballyPositioned { drag.essentialsSection = it.boundsInRoot() }
+                    .ignoringTouches(state.arranging),
             ) {
                 EssentialsSection(
                     essentials = state.essentials,
                     newUrls = newEssentials,
                     asGrid = showLabels,
-                    collapsedMaxHeight = essentialsResizer.maxHeight,
+                    collapsedMaxHeight = maxHeightDp(sectionMax?.essentials),
+                    collapsedScroll = essentialsScroll,
                     onIntent = onIntent,
                     dropTarget = essentialsHighlight,
                     canPinToSpace = state.spaces.isNotEmpty(),
                 )
             }
-            // The Divider between the Essentials Section and the Tab List.
-            SectionDivider(essentialsResizer.takeIf { resizable }, stringResource(R.string.sideraven_resize_essentials))
+            // The Divider between the Essentials Section and the Tab List; a grab bar in Arrange Mode.
+            if (state.arranging) ArrangeBar(CollapsedSection.Essentials, stringResource(R.string.sideraven_resize_essentials)) else SectionDivider()
         }
         val moveTargets = state.spaces.filterNot { it.isCurrent }
         val tabMenuExtras: @Composable (String, () -> Unit) -> Unit = { tabId, dismiss ->
@@ -1319,25 +1408,43 @@ private fun SidebarPanel(
             Box(
                 Modifier
                     .onGloballyPositioned { drag.pinnedSection = it.boundsInRoot() }
-                    .graphicsLayer { spaceEnter.apply(this) },
+                    .graphicsLayer { spaceEnter.apply(this) }
+                    .ignoringTouches(state.arranging),
             ) {
                 PinnedTabsBlock(
                     pinned = state.pinned,
                     showLabels = showLabels,
-                    maxHeight = if (resizable) pinnedResizer.maxHeight else panelHeight / 3,
+                    maxHeight = if (showLabels) panelHeight / 3 else maxHeightDp(sectionMax?.pinned),
+                    scroll = pinnedScroll,
                     onIntent = onIntent,
                     rows = state.pinnedRows,
                     folders = state.folders,
                     dropTarget = pinHighlight,
-                    resizing = pinnedResizer.resizing,
+                    resizing = dragging,
                 )
             }
-            SectionDivider(pinnedResizer.takeIf { resizable }, stringResource(R.string.sideraven_resize_pinned))
+            if (state.arranging) ArrangeBar(CollapsedSection.Pinned, stringResource(R.string.sideraven_resize_pinned)) else SectionDivider()
         }
         key(state.currentSpace?.id) {
         val listState = rememberLazyListState()
+        // Tab List Direction, and where each block starts in the list (the header spacer is index 0).
+        val bottomUp = LocalSidebarLook.current.tabListDirection == TabListDirection.BottomUp
+        val desktopShown = state.desktopTabs?.takeIf { showLabels }
+        val desktopItems = desktopShown?.let { 1 + if (it.expanded) it.tabs.size else 0 } ?: 0
+        val inactiveItems = state.inactive?.let { 1 + if (it.expanded && showLabels) it.tabs.size else 0 } ?: 0
+        val tabsStart = if (bottomUp) 1 + desktopItems + inactiveItems else 1
+        // The first inactive tab, after its header.
+        val inactiveStart = if (bottomUp) 1 + desktopItems + 1 else 1 + state.tabs.size + 1
+        // A long bottom-up list opens at its end, by the address bar.
+        LaunchedEffect(Unit) { if (bottomUp && state.tabs.isNotEmpty()) listState.scrollToItem(tabsStart + state.tabs.size - 1) }
         val scrollMoves = LocalSidebarMotion.current.moves
-        ScrollToNewTopTab(state = state, scrollToTop = { if (scrollMoves) listState.animateScrollToItem(0) else listState.scrollToItem(0) })
+        ScrollToNewTab(
+            state = state,
+            scrollTo = { atEnd ->
+                val index = if (atEnd) tabsStart + state.tabs.size - 1 else if (bottomUp) tabsStart else 0
+                if (scrollMoves) listState.animateScrollToItem(index) else listState.scrollToItem(index)
+            },
+        )
 
         // Tab Drag: long-press then drag reorders; long-press and release opens the Tab Context Menu.
         val currentOnIntent by rememberUpdatedState(onIntent)
@@ -1379,6 +1486,7 @@ private fun SidebarPanel(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth()
+                    .ignoringTouches(state.arranging, SidebarTestTag.TAB_LIST)
                     .sidebarListPressAndDrag(
                         listState = listState,
                         reorderState = reorderState,
@@ -1407,6 +1515,11 @@ private fun SidebarPanel(
                             val tabId = key?.takeUnless { it == LIST_HEADER_KEY || it == INACTIVE_HEADER_KEY }?.removePrefix(INACTIVE_KEY_PREFIX)
                             val inactiveHeaderY =
                                 listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == INACTIVE_HEADER_KEY }?.offset?.toFloat()
+                            // Bottom up, the section is above the tabs: past its last row is out of it.
+                            val inactiveEndY =
+                                listState.layoutInfo.visibleItemsInfo
+                                    .filter { (it.key as? String)?.let { k -> k == INACTIVE_HEADER_KEY || k.startsWith(INACTIVE_KEY_PREFIX) } == true }
+                                    .maxOfOrNull { (it.offset + it.size).toFloat() }
                             when {
                                 tabId == null -> Unit
                                 // Dropped on Pin: pin it to this Space.
@@ -1428,8 +1541,10 @@ private fun SidebarPanel(
                                     )
                                     onIntent(SidebarIntent.PinTab(tabId))
                                 }
-                                // An inactive tab dropped above the Inactive header: reactivate it.
-                                key.startsWith(INACTIVE_KEY_PREFIX) && inactiveHeaderY != null && y < inactiveHeaderY ->
+                                // An inactive tab dropped among the active tabs (above the Inactive header; below the section, bottom up): reactivate it.
+                                key.startsWith(INACTIVE_KEY_PREFIX) && !bottomUp && inactiveHeaderY != null && y < inactiveHeaderY ->
+                                    onIntent(SidebarIntent.ReactivateTab(tabId))
+                                key.startsWith(INACTIVE_KEY_PREFIX) && bottomUp && inactiveEndY != null && y > inactiveEndY ->
                                     onIntent(SidebarIntent.ReactivateTab(tabId))
                                 else -> Unit
                             }
@@ -1441,12 +1556,92 @@ private fun SidebarPanel(
                     }
                     .graphicsLayer { spaceEnter.apply(this) }
                     .testTag(SidebarTestTag.TAB_LIST),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            // Bottom up: a short list rests on the bottom edge.
+            verticalArrangement = Arrangement.spacedBy(2.dp, if (bottomUp) Alignment.Bottom else Alignment.Top),
         ) {
             item(key = LIST_HEADER_KEY) { Spacer(Modifier.height(8.dp)) }
+            // Top down: the tabs, then the Inactive and Desktop Tabs sections. Bottom up mirrors it, so the
+            // newest tabs sit by the address bar and the sections stay at the far end.
+            if (bottomUp) {
+            // Desktop Tabs: read-only, only where rows have labels.
+            state.desktopTabs?.takeIf { showLabels }?.let { group ->
+                item(key = DESKTOP_HEADER_KEY) {
+                    DesktopTabsHeader(group, onToggle = { onIntent(SidebarIntent.ToggleDesktopTabs) }, modifier = sidebarItem())
+                }
+                if (group.expanded) {
+                    itemsIndexed(group.tabs, key = { index, tab -> "$DESKTOP_KEY_PREFIX$index|${tab.url}" }) { _, tab ->
+                        DesktopTabRow(tab, group.icons[tab.url], onClick = { onIntent(SidebarIntent.OpenDesktopTab(tab.url)) }, modifier = sidebarItem())
+                    }
+                }
+            }
+            state.inactive?.let { section ->
+                item(key = INACTIVE_HEADER_KEY) {
+                    InactiveSectionHeader(
+                        section = section,
+                        showLabels = showLabels,
+                        onToggle = { onIntent(SidebarIntent.ToggleInactiveSection) },
+                        onReveal = { onIntent(SidebarIntent.RevealInactiveSection) },
+                        onCloseAll = { onIntent(SidebarIntent.CloseAllInactive) },
+                        modifier = Modifier.then(sidebarItem()),
+                    )
+                }
+                if (section.expanded && showLabels) {
+                    itemsIndexed(section.tabs, key = { _, tab -> INACTIVE_KEY_PREFIX + tab.id }) { inactiveIndex, tab ->
+                        // List index: where the section's first tab sits, plus its place in the section.
+                        SidebarReorderableItem(
+                            state = reorderState,
+                            key = INACTIVE_KEY_PREFIX + tab.id,
+                            position = inactiveStart + inactiveIndex,
+                        ) {
+                        SwipeToCloseTabItem(
+                            tab = tab,
+                            showLabels = true,
+                            labelAlpha = titleAlpha,
+                            menuOpen = menuTabId == tab.id,
+                            onMenuRequest = { menuTabId = tab.id },
+                            onMenuDismiss = { menuTabId = null },
+                            // Selecting an inactive tab makes it active again (Fenix tracks last access).
+                            onClick = { if (pendingMenuTabId == null) onIntent(SidebarIntent.SelectTab(tab.id)) },
+                            onClose = { onIntent(SidebarIntent.CloseTab(tab.id)) },
+                            onDuplicate = { onIntent(SidebarIntent.DuplicateTab(tab.id)) },
+                            pinBlock = state.pinBlock,
+                            onPin = { onIntent(SidebarIntent.PinTab(tab.id)) },
+                            onMoveUp = null,
+                            onMoveDown = null,
+                            onToggleMute = { onIntent(SidebarIntent.ToggleMute(tab.id)) },
+                            isDragging = reorderState.draggingItemKey == INACTIVE_KEY_PREFIX + tab.id,
+                        )
+                        }
+                    }
+                }
+            }
+
             itemsIndexed(state.tabs, key = { _, tab -> tab.id }) { index, tab ->
-                // +1: the header item sits at list index 0.
-                SidebarReorderableItem(state = reorderState, key = tab.id, position = index + 1) {
+                SidebarReorderableItem(state = reorderState, key = tab.id, position = tabsStart + index) {
+                    val above = state.tabs.getOrNull(index - 1)
+                    val below = state.tabs.getOrNull(index + 1)
+                    SwipeToCloseTabItem(
+                        tab = tab,
+                        showLabels = showLabels,
+                        labelAlpha = titleAlpha,
+                        isDragging = reorderState.draggingItemKey == tab.id,
+                        menuOpen = menuTabId == tab.id,
+                        onMenuRequest = { menuTabId = tab.id },
+                        onMenuDismiss = { menuTabId = null },
+                        onClick = { if (pendingMenuTabId == null) onIntent(SidebarIntent.SelectTab(tab.id)) },
+                        onClose = { onIntent(SidebarIntent.CloseTab(tab.id)) },
+                        onDuplicate = { onIntent(SidebarIntent.DuplicateTab(tab.id)) },
+                        pinBlock = state.pinBlock,
+                        onPin = { onIntent(SidebarIntent.PinTab(tab.id)) },
+                        onMoveUp = above?.let { { onIntent(SidebarIntent.MoveTab(tab.id, it.id, movedDown = false)) } },
+                        onMoveDown = below?.let { { onIntent(SidebarIntent.MoveTab(tab.id, it.id, movedDown = true)) } },
+                        onToggleMute = { onIntent(SidebarIntent.ToggleMute(tab.id)) },
+                    )
+                }
+            }
+            } else {
+            itemsIndexed(state.tabs, key = { _, tab -> tab.id }) { index, tab ->
+                SidebarReorderableItem(state = reorderState, key = tab.id, position = tabsStart + index) {
                     val above = state.tabs.getOrNull(index - 1)
                     val below = state.tabs.getOrNull(index + 1)
                     SwipeToCloseTabItem(
@@ -1482,11 +1677,11 @@ private fun SidebarPanel(
                 }
                 if (section.expanded && showLabels) {
                     itemsIndexed(section.tabs, key = { _, tab -> INACTIVE_KEY_PREFIX + tab.id }) { inactiveIndex, tab ->
-                        // List index: header spacer + active tabs + inactive header + position.
+                        // List index: where the section's first tab sits, plus its place in the section.
                         SidebarReorderableItem(
                             state = reorderState,
                             key = INACTIVE_KEY_PREFIX + tab.id,
-                            position = state.tabs.size + 2 + inactiveIndex,
+                            position = inactiveStart + inactiveIndex,
                         ) {
                         SwipeToCloseTabItem(
                             tab = tab,
@@ -1522,6 +1717,7 @@ private fun SidebarPanel(
                     }
                 }
             }
+            }
         }
 
         }
@@ -1556,17 +1752,30 @@ private fun SidebarPanel(
             )
         }
 
+        if (state.arranging) {
+            ArrangeControls(arrangeIntent)
+        } else {
         SidebarControls(
+            controls = state.controls,
             showLabels = showLabels,
             nextMode = state.nextMode,
             isPrivate = state.isPrivate,
             chosenLayout = state.chosenLayout,
-            layoutMovable = state.layoutMovable,
             onIntent = onIntent,
         )
         // The Sidebar Address Bar at the bottom edge, where the thumb lands first.
         if (showLabels) {
-            state.address?.let { AddressBar(it, onIntent) }
+            state.address?.let { address ->
+                // Sideways swipes move through the Tab List; not from an Essential or Pinned Tab, which isn't in it.
+                val selected = state.tabs.indexOfFirst { it.isSelected }
+                AddressBar(
+                    address = address,
+                    onIntent = onIntent,
+                    previousTab = state.tabs.getOrNull(selected - 1)?.id?.takeIf { selected >= 0 },
+                    nextTab = state.tabs.getOrNull(selected + 1)?.id?.takeIf { selected >= 0 },
+                )
+            }
+        }
         }
         }
         }
@@ -1586,7 +1795,7 @@ private fun SidebarPanel(
 }
 
 /**
- * Tab Close Gesture (ADR 0003, amended): swipe toward the nearest screen edge, starting on the
+ * Tab Close Gesture: swipe toward the nearest screen edge, starting on the
  * item; see [SwipeToClose].
  */
 @Composable
@@ -1679,7 +1888,7 @@ private fun SidebarTabItem(
     val closeLabel = stringResource(R.string.sideraven_close_tab)
     val fill by
         animateColorAsState(
-            targetValue = if (tab.isSelected || isSwiping) colors.surfaceContainerHigh else Color.Transparent,
+            targetValue = if (tab.isSelected || isSwiping) sidebarFill(SidebarFill.High) else Color.Transparent,
             animationSpec =
                 if (tab.isSelected) {
                     snap()
@@ -2034,17 +2243,161 @@ private class SidebarControl(
     val onClick: () -> Unit,
 )
 
+/** Arrange Mode's grab bars: TalkBack's "Show more" and "Show less" move one by this share of the strip. */
+private const val ARRANGE_STEP = 0.1f
+
 /**
- * Sidebar Controls: New Tab, the Browsing Mode Switch, the Toggle and the layout button. One row of
- * icon buttons in the full Sidebar (long-press for the name); a column of icons when Collapsed.
+ * While [ignore] (Arrange Mode), taps and drags inside don't reach the content, and TalkBack doesn't
+ * offer its actions: only the grab bars and Arrange Mode's buttons act.
+ */
+private fun Modifier.ignoringTouches(
+    ignore: Boolean,
+    // The node's own test tag survives (clearing the semantics would drop it).
+    tag: String? = null,
+): Modifier =
+    if (!ignore) {
+        this
+    } else {
+        clearAndSetSemantics { tag?.let { this[SemanticsProperties.TestTag] = it } }.pointerInput(Unit) {
+            awaitPointerEventScope {
+                while (true) awaitPointerEvent(PointerEventPass.Initial).changes.forEach { it.consume() }
+            }
+        }
+    }
+
+/**
+ * Arrange Mode's grab bar in place of a Divider: as wide as the strip, about 32dp tall. Dragging it
+ * sets the height of the section above ([height] when picked up, never past [room]), with a tick on
+ * pickup; TalkBack gets Show more and Show less.
+ */
+@Composable
+private fun GrabBar(
+    label: String,
+    height: () -> Float,
+    room: () -> Float,
+    onDragging: (Float) -> Unit,
+    onLetGo: () -> Unit,
+    onStep: (Float) -> Unit,
+) {
+    val haptics = LocalHapticFeedback.current
+    val more = stringResource(R.string.sideraven_section_show_more)
+    val less = stringResource(R.string.sideraven_section_show_less)
+    val currentHeight by rememberUpdatedState(height)
+    val currentRoom by rememberUpdatedState(room)
+    val currentOnDragging by rememberUpdatedState(onDragging)
+    val currentOnLetGo by rememberUpdatedState(onLetGo)
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .pointerInput(Unit) {
+                    var start = 0f
+                    var moved = 0f
+                    detectVerticalDragGestures(
+                        onDragStart = {
+                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            start = currentHeight()
+                            moved = 0f
+                        },
+                        onVerticalDrag = { change, dy ->
+                            change.consume()
+                            moved += dy
+                            currentOnDragging((start + moved).coerceIn(0f, currentRoom().coerceAtLeast(0f)))
+                        },
+                        onDragEnd = { currentOnLetGo() },
+                        onDragCancel = { currentOnLetGo() },
+                    )
+                }
+                .semantics {
+                    contentDescription = label
+                    customActions =
+                        listOf(
+                            CustomAccessibilityAction(more) {
+                                onStep(ARRANGE_STEP)
+                                true
+                            },
+                            CustomAccessibilityAction(less) {
+                                onStep(-ARRANGE_STEP)
+                                true
+                            },
+                        )
+                }
+                .testTag(SidebarTestTag.GRAB_BAR),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            Modifier
+                .width(28.dp)
+                .height(4.dp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(MaterialTheme.colorScheme.primary),
+        )
+    }
+}
+
+/** Arrange Mode's buttons, in place of the Sidebar Controls: Reset to the automatic sizes, and Done. */
+@Composable
+private fun ArrangeControls(onIntent: (SidebarIntent) -> Unit) {
+    ControlRow(
+        iconRes = iconsR.drawable.mozac_ic_arrow_clockwise_24,
+        label = stringResource(R.string.sideraven_arrange_reset),
+        showLabel = false,
+        labelAlpha = 0f,
+        testTag = SidebarTestTag.ARRANGE_RESET,
+    ) { onIntent(SidebarIntent.ResetArrangement) }
+    ControlRow(
+        iconRes = iconsR.drawable.mozac_ic_checkmark_24,
+        label = stringResource(R.string.sideraven_arrange_done),
+        showLabel = false,
+        labelAlpha = 0f,
+        testTag = SidebarTestTag.ARRANGE_DONE,
+    ) { onIntent(SidebarIntent.DoneArranging) }
+    Spacer(Modifier.height(4.dp))
+}
+
+/** The Divider under the Essentials Section or the Pinned Tabs. */
+@Composable
+private fun SectionDivider() {
+    HorizontalDivider(modifier = Modifier.padding(horizontal = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
+}
+
+/**
+ * What a section holds: its scroll's viewport plus what's past it; 0 when the section isn't shown, and
+ * null until its scroll has been measured (before that, its range reads as Int.MAX_VALUE).
+ */
+private fun contentHeight(
+    scroll: ScrollState,
+    shown: Boolean,
+): Float? =
+    when {
+        !shown -> 0f
+        scroll.maxValue == Int.MAX_VALUE -> null
+        else -> scroll.viewportSize.toFloat() + scroll.maxValue.toFloat()
+    }
+
+/** The test tag of each Sidebar Control's button. */
+internal val SidebarControlKind.testTag: String
+    get() =
+        when (this) {
+            SidebarControlKind.NewTab -> SidebarTestTag.NEW_TAB
+            SidebarControlKind.BrowsingModeSwitch -> SidebarTestTag.MODE_SWITCH
+            SidebarControlKind.SyncedTabs -> SidebarTestTag.SYNCED_TABS
+            SidebarControlKind.Toggle -> SidebarTestTag.TOGGLE
+            SidebarControlKind.LayoutButton -> SidebarTestTag.LAYOUT_BUTTON
+        }
+
+/**
+ * Sidebar Controls, drawn from [controls] in order. One row of icon buttons sharing the full
+ * Sidebar's width (long-press for the name); a column of icons when Collapsed.
  */
 @Composable
 private fun SidebarControls(
+    controls: List<SidebarControlKind>,
     showLabels: Boolean,
     nextMode: SidebarMode?,
     isPrivate: Boolean,
     chosenLayout: AddressBarLayout,
-    layoutMovable: Boolean,
     onIntent: (SidebarIntent) -> Unit,
 ) {
     // The Toggle and layout button picture the window with the Sidebar on its own side.
@@ -2054,41 +2407,46 @@ private fun SidebarControls(
         left: Int,
         right: Int,
     ) = if (onRight) right else left
-    val controls =
-        buildList {
-            add(SidebarControl(iconsR.drawable.mozac_ic_plus_24, stringResource(R.string.sideraven_new_tab), SidebarTestTag.NEW_TAB) { onIntent(SidebarIntent.NewTab) })
-            // Browsing Mode Switch: its label names the mode it switches to.
-            add(
-                SidebarControl(
-                    if (isPrivate) R.drawable.sideraven_ic_private_fill_24 else R.drawable.sideraven_ic_private_24,
-                    stringResource(if (isPrivate) R.string.sideraven_switch_to_normal else R.string.sideraven_switch_to_private),
-                    SidebarTestTag.MODE_SWITCH,
-                ) { onIntent(SidebarIntent.SwitchBrowsingMode) },
-            )
-            // The Toggle's icon pictures the mode it switches to: a wide Sidebar, a narrow one, or a hidden one.
-            if (nextMode != null) {
-                add(
+    // The Collapsed column never shows the layout button: mid mode change it would flash there.
+    val shown = if (showLabels) controls else controls - SidebarControlKind.LayoutButton
+    val buttons =
+        shown.mapNotNull { kind ->
+            when (kind) {
+                SidebarControlKind.NewTab ->
+                    SidebarControl(iconsR.drawable.mozac_ic_plus_24, stringResource(R.string.sideraven_new_tab), kind.testTag) { onIntent(SidebarIntent.NewTab) }
+                // Browsing Mode Switch: its label names the mode it switches to.
+                SidebarControlKind.BrowsingModeSwitch ->
                     SidebarControl(
-                        when (nextMode) {
+                        if (isPrivate) R.drawable.sideraven_ic_private_fill_24 else R.drawable.sideraven_ic_private_24,
+                        stringResource(if (isPrivate) R.string.sideraven_switch_to_normal else R.string.sideraven_switch_to_private),
+                        kind.testTag,
+                    ) { onIntent(SidebarIntent.SwitchBrowsingMode) }
+                SidebarControlKind.SyncedTabs ->
+                    SidebarControl(R.drawable.sideraven_ic_synced_tabs_24, stringResource(R.string.sideraven_synced_tabs), kind.testTag) {
+                        onIntent(SidebarIntent.OpenSyncedTabs)
+                    }
+                // The Toggle's icon pictures the mode it switches to: a wide Sidebar, a narrow one, or a hidden one.
+                SidebarControlKind.Toggle -> {
+                    val target = nextMode ?: return@mapNotNull null
+                    SidebarControl(
+                        when (target) {
                             SidebarMode.Persistent -> sided(R.drawable.sideraven_ic_sidebar_persistent_24, R.drawable.sideraven_ic_sidebar_persistent_right_24)
                             SidebarMode.Collapsed -> sided(R.drawable.sideraven_ic_sidebar_collapsed_24, R.drawable.sideraven_ic_sidebar_collapsed_right_24)
                             SidebarMode.AutoHide -> sided(R.drawable.sideraven_ic_sidebar_autohide_24, R.drawable.sideraven_ic_sidebar_autohide_right_24)
                         },
                         stringResource(
-                            when (nextMode) {
+                            when (target) {
                                 SidebarMode.Persistent -> R.string.sideraven_expand_sidebar
                                 SidebarMode.Collapsed -> R.string.sideraven_collapse_sidebar
                                 SidebarMode.AutoHide -> R.string.sideraven_autohide_sidebar
                             },
                         ),
-                        SidebarTestTag.TOGGLE,
-                    ) { onIntent(SidebarIntent.ToggleMode) },
-                )
-            }
-            // The layout button: the address moves to Fenix's toolbar (top or bottom, as Fenix is set) or the
-            // Sidebar; offered only where it can act (not in Auto-Hide with no handle and no edge swipe).
-            if (showLabels && layoutMovable) {
-                add(
+                        kind.testTag,
+                    ) { onIntent(SidebarIntent.ToggleMode) }
+                }
+                // The layout button: the address moves to Fenix's toolbar (top or bottom, as Fenix is set)
+                // or the Sidebar; in the list only where it can act.
+                SidebarControlKind.LayoutButton ->
                     SidebarControl(
                         // Pictures where the address goes.
                         if (chosenLayout == AddressBarLayout.Sidebar) {
@@ -2097,20 +2455,17 @@ private fun SidebarControls(
                             sided(R.drawable.sideraven_ic_address_in_sidebar_24, R.drawable.sideraven_ic_address_in_sidebar_right_24)
                         },
                         stringResource(if (chosenLayout == AddressBarLayout.Sidebar) R.string.sideraven_layout_to_top else R.string.sideraven_layout_to_sidebar),
-                        SidebarTestTag.LAYOUT_BUTTON,
-                    ) { onIntent(SidebarIntent.ToggleAddressBarLayout) },
-                )
+                        kind.testTag,
+                    ) { onIntent(SidebarIntent.ToggleAddressBarLayout) }
             }
         }
     if (showLabels) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            controls.forEach { ControlButton(it) }
+        // Equal shares of the row: fewer buttons, wider touch targets.
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp)) {
+            buttons.forEach { ControlButton(it, Modifier.weight(1f)) }
         }
     } else {
-        controls.forEach { ControlRow(it.iconRes, it.label, showLabel = false, labelAlpha = 0f, testTag = it.testTag, onClick = it.onClick) }
+        buttons.forEach { ControlRow(it.iconRes, it.label, showLabel = false, labelAlpha = 0f, testTag = it.testTag, onClick = it.onClick) }
         Spacer(Modifier.height(4.dp))
     }
 }
@@ -2118,28 +2473,35 @@ private fun SidebarControls(
 /** An icon-only control; long-press (or hover) shows its name. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ControlButton(control: SidebarControl) {
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-        tooltip = { PlainTooltip { Text(control.label) } },
-        state = rememberTooltipState(),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(48.dp)
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable(role = Role.Button, onClick = control.onClick)
-                    .semantics { contentDescription = control.label }
-                    .testTag(control.testTag),
-            contentAlignment = Alignment.Center,
+private fun ControlButton(
+    control: SidebarControl,
+    modifier: Modifier = Modifier,
+) {
+    // The share of the row goes on a plain Box: TooltipBox doesn't pass a weight on to the Row.
+    Box(modifier) {
+        TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+            tooltip = { PlainTooltip { Text(control.label) } },
+            state = rememberTooltipState(),
         ) {
-            Icon(
-                painter = painterResource(control.iconRes),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable(role = Role.Button, onClick = control.onClick)
+                        .semantics { contentDescription = control.label }
+                        .testTag(control.testTag),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(control.iconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
@@ -2186,20 +2548,26 @@ private fun ControlRow(
 }
 
 /**
- * When a tab that wasn't there before appears at the top of the Tab List, scroll to it so the
- * user sees where it went (ticket 03). Reorders and selection changes don't scroll.
+ * When a tab that wasn't there before appears at either end of the Tab List, scroll to it so the
+ * user sees where it went ([scrollTo] gets true for the end). Reorders and selection changes don't scroll.
  */
 @Composable
-private fun ScrollToNewTopTab(
+private fun ScrollToNewTab(
     state: SidebarUiState,
-    scrollToTop: suspend () -> Unit,
+    scrollTo: suspend (atEnd: Boolean) -> Unit,
 ) {
-    val topId = state.tabs.firstOrNull()?.id
+    val firstId = state.tabs.firstOrNull()?.id
+    val lastId = state.tabs.lastOrNull()?.id
     val seen = remember { mutableSetOf<String>() }
-    LaunchedEffect(topId) {
-        val isNew = topId != null && seen.isNotEmpty() && topId !in seen
+    LaunchedEffect(firstId, lastId) {
+        val known = seen.isNotEmpty()
+        val newFirst = known && firstId != null && firstId !in seen
+        val newLast = known && lastId != null && lastId !in seen
         seen.clear()
         state.tabs.mapTo(seen) { it.id }
-        if (isNew) scrollToTop()
+        when {
+            newFirst -> scrollTo(false)
+            newLast -> scrollTo(true)
+        }
     }
 }

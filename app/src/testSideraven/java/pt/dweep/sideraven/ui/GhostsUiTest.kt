@@ -26,7 +26,7 @@ import pt.dweep.sideraven.SidebarSpace
 import pt.dweep.sideraven.SidebarUiState
 import pt.dweep.sideraven.theme.SideravenTheme
 
-/** Spaces ticket 09: the selected Pinned Tab's ×, and Unload in the menus. */
+/** The selected Pinned Tab's ×, and Unload in the menus. */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w1280dp-h800dp")
 class GhostsUiTest {

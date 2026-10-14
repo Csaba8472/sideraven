@@ -20,7 +20,7 @@ import pt.dweep.sideraven.InMemoryEssentialsRepository
 import pt.dweep.sideraven.InMemorySpacesRepository
 import pt.dweep.sideraven.Spaces
 
-/** Spec 0009 ticket 02: Zen's favicons are kept out of the stored items, and still reach Zen unchanged. */
+/** Zen's favicons are kept out of the stored items, and still reach Zen unchanged. */
 @RunWith(AndroidJUnit4::class)
 class ZenFaviconsStoreTest {
     private val server = FakeSyncServer()

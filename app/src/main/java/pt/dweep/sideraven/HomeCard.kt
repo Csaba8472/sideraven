@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 
 /**
- * Fenix's home screen as a card (spec 0006): while the content is framed, the area between the
+ * Fenix's home screen as a card: while the content is framed, the area between the
  * home toolbars gets a rounded, slightly different tone, so home reads like a web page inside the
  * frame. The tint is translucent, so a wallpaper still shows. Fenix's home calls this from one
  * `SIDERAVEN-HOOK`, around its content.

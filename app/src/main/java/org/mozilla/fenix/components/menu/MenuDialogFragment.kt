@@ -645,6 +645,8 @@ class MenuDialogFragment : BottomSheetDialogFragment() {
                                         onStopButtonClick = {
                                             menuStore.dispatch(MenuAction.Navigate.Stop)
                                         },
+                                        // SIDERAVEN-HOOK: Sideraven's menu entries close the menu.
+                                        onSideravenEntryChosen = { dismiss() },
                                         onShareButtonClick = {
                                             selectedTab?.let {
                                                 menuStore.dispatch(MenuAction.Navigate.Share)
